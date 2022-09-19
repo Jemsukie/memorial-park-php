@@ -1,1 +1,3 @@
-<div class="container mt-2 d-flex justify-content-center"><h1>Katoninongan Memorial Park</h1></div>
+<div class="container mt-2 text-center">
+    <h1>Katoninongan Memorial Park</h1>
+</div>
