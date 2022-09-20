@@ -1,13 +1,12 @@
-<div>
+<div id="map-container">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js"></script>
     <script src="https://code.highcharts.com/maps/highmaps.js"></script>
     <script src="https://code.highcharts.com/maps/modules/data.js"></script>
     <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
     <script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
-
     <style>
-    #container {
+    #map-container {
         height: 500px;
         min-width: 310px;
         max-width: 800px;
@@ -20,9 +19,6 @@
         color: gray;
     }
     </style>
-
-    <div id="container"></div>
-
     <script>
     (async () => {
 
@@ -40,7 +36,7 @@
 
         const H = Highcharts;
 
-        const chart = Highcharts.mapChart('container', {
+        const chart = Highcharts.mapChart('map-container', {
             title: {
                 text: ''
             },
@@ -98,7 +94,7 @@
         });
 
         // Display custom label with lat/lon next to crosshairs
-        document.getElementById('container').addEventListener('mousemove', e => {
+        document.getElementById('map-container').addEventListener('mousemove', e => {
             if (!chart.lbl) {
                 chart.lbl = chart.renderer.text('', 0, 0)
                     .attr({

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-class Home extends BaseController
+class User extends BaseController
 {
     public function __construct(){
         helper(['url', 'form']);
@@ -11,93 +11,77 @@ class Home extends BaseController
     public function links (){
         return [
             [
-                'name' => 'Home',
-                'link' => 'Home/'
+                'name' => 'Deceaseds',
+                'link' => 'User/'
             ],
             [
-                'name' => 'About',
-                'link' => 'Home/about'
+                'name' => 'Appointments',
+                'link' => 'User/appointments'
             ],
             [
-                'name' => 'Contact Us',
-                'link' => 'Home/contact'
+                'name' => 'Settings',
+                'link' => 'User/settings'
             ],
             [
-                'name' => 'Login',
-                'link' => 'Home/login'
+                'name' => 'Logout',
+                'link' => 'User/logout'
             ]
         ];
     }
     
     public function index(){
         
-        $data['title'] = 'Home';
+        $data['title'] = 'Main';
         $data['links'] = $this->links();
 
         $html['body'] = view('extras/navigation', $data)
-        . view('homepage/index', $data)
-        . view('highcharts/map');
+        . view('admin/accounts');
         $html['head'] = view('extras/head', $data);
         $html['sidebar'] = view('extras/sidebar', $data);
 
         return view('extras/body', $html);
     }
 
-    public function about(){
-
-        $data['title'] = 'About';
+    public function appointments(){
+        
+        $data['title'] = 'Announcements';
         $data['links'] = $this->links();
 
         $html['body'] = view('extras/navigation', $data)
-        . view('homepage/about');
-
+        . view('admin/accounts');
         $html['head'] = view('extras/head', $data);
         $html['sidebar'] = view('extras/sidebar', $data);
 
         return view('extras/body', $html);
     }
 
-    public function contact(){
-
-        $data['title'] = 'Contact Us';
+    public function settings(){
+        
+        $data['title'] = 'Settings';
         $data['links'] = $this->links();
 
         $html['body'] = view('extras/navigation', $data)
-        . view('homepage/contact');
-
+        . view('admin/accounts');
         $html['head'] = view('extras/head', $data);
         $html['sidebar'] = view('extras/sidebar', $data);
 
         return view('extras/body', $html);
     }
 
-    public function login(){
-
-        $data['title'] = 'Login';
+    public function logout(){
+        
+        $data['title'] = 'Logout';
         $data['links'] = $this->links();
 
         $html['body'] = view('extras/navigation', $data)
-        . view('homepage/login');
-
+        . view('admin/accounts');
         $html['head'] = view('extras/head', $data);
         $html['sidebar'] = view('extras/sidebar', $data);
 
         return view('extras/body', $html);
     }
 
-    public function signup(){
-
-        $data['title'] = 'Sign Up';
-        $data['links'] = $this->links();
-
-        $html['body'] = view('extras/navigation', $data)
-        . view('homepage/signup');
-
-        $html['head'] = view('extras/head', $data);
-        $html['sidebar'] = view('extras/sidebar', $data);
-
-        return view('extras/body', $html);
-    }
+    
 }
 
 ?>
