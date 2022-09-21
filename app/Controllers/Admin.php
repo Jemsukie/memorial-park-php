@@ -13,7 +13,7 @@ class Admin extends BaseController
         helper(['url', 'form']);
     }
 
-    public function links (){
+    private function links (){
         return [
             [
                 'name' => 'Accounts',
@@ -37,7 +37,7 @@ class Admin extends BaseController
             ],
             [
                 'name' => 'Logout',
-                'link' => 'Admin/logout'
+                'link' => 'Auth/logout'
             ]
         ];
     }
@@ -72,8 +72,8 @@ class Admin extends BaseController
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('components/cards', $data )
-            . view('admin/accounts/' . $roles, $data ),
+            . view('components/cards', $data)
+            . view('admin/accounts/' . $roles, $data),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -81,8 +81,38 @@ class Admin extends BaseController
         return view('extras/body', $html);
     }
 
-    public function deceaseds(){
+    public function makeAdmin($id){
+        $session = \Config\Services::session();
+        $userModel = new UserModel();
 
+        $userModel->update($id, ['roles' => 'admin']);
+
+        $session->setFlashdata('success', 'Admin User Created!');
+		return $this->response->redirect(base_url('/Admin'));
+    }
+
+    public function deleteUser($id){
+        $session = \Config\Services::session();
+        $userModel = new UserModel();
+
+        function deleteAppointments($userId){
+            $appointmentModel = new AppointmentModel();
+            $rows = $appointmentModel->where('userId = ' . $userId)->paginate();
+
+            foreach($rows as $row){
+                $appointmentModel->where('id', $row['id'])->delete($row['id']);
+            }
+            return true;
+        }
+
+        if(deleteAppointments($id)){
+            $userModel->where('id', $id)->delete($id);
+            $session->setFlashdata('success', 'Record Successfully Deleted!');
+		    return $this->response->redirect(base_url('/Admin'));
+        }
+    }
+
+    public function deceaseds(){
         $filter = [
             'firstName' => $this->request->getVar('firstName'),
             'lastName' => $this->request->getVar('lastName'),

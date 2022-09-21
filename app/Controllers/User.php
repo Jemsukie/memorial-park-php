@@ -13,7 +13,7 @@ class User extends BaseController
         helper(['url', 'form']);
     }
 
-    public function links (){
+    private function links (){
         return [
             [
                 'name' => 'Deceaseds',
@@ -29,7 +29,7 @@ class User extends BaseController
             ],
             [
                 'name' => 'Logout',
-                'link' => 'User/logout'
+                'link' => 'Auth/logout'
             ]
         ];
     }

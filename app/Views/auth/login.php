@@ -11,7 +11,7 @@
             <input type="password" class="form-control" id="input-password" placeholder="Password" name="password" required>
         </div>
         <button type="submit" class="btn btn-primary w-100 mt-2">Submit</button>
-        <p>No account yet? <a href="<?= base_url('Home/signup') ?>">Sign Up</a> here</p>
+        <p>No account yet? <a href="<?= base_url('Auth/signup') ?>">Sign Up</a> here</p>
         
     </form>
 </div>

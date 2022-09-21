@@ -8,7 +8,7 @@ class Home extends BaseController
         helper(['url', 'form']);
     }
 
-    public function links (){
+    private function links (){
         return [
             [
                 'name' => 'Home',
@@ -24,13 +24,12 @@ class Home extends BaseController
             ],
             [
                 'name' => 'Login',
-                'link' => 'Home/login'
+                'link' => 'Auth/login'
             ]
         ];
     }
     
     public function index(){
-        
         $data['title'] = 'Home';
         $data['links'] = $this->links();
 
@@ -71,33 +70,6 @@ class Home extends BaseController
         return view('extras/body', $html);
     }
 
-    public function login(){
-
-        $data['title'] = 'Login';
-        $data['links'] = $this->links();
-
-        $html['body'] = view('extras/navigation', $data)
-        . view('homepage/login');
-
-        $html['head'] = view('extras/head', $data);
-        $html['sidebar'] = view('extras/sidebar', $data);
-
-        return view('extras/body', $html);
-    }
-
-    public function signup(){
-
-        $data['title'] = 'Sign Up';
-        $data['links'] = $this->links();
-
-        $html['body'] = view('extras/navigation', $data)
-        . view('homepage/signup');
-
-        $html['head'] = view('extras/head', $data);
-        $html['sidebar'] = view('extras/sidebar', $data);
-
-        return view('extras/body', $html);
-    }
 }
 
 ?>

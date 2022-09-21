@@ -2,3 +2,4 @@
     <button class="btn" id="sidebarToggle"><span class="navbar-toggler-icon mx-2"></span></button>
 </nav>
 
+<?php include('flash.php') ?>

@@ -1,4 +1,5 @@
 <div class="container mt-2">
+
     <h2><?= ucwords($roles) ?></h2>
     <?php if(!$user_data): ?>
         <p>No records yet</p>
@@ -24,5 +25,5 @@
         </table>
     <?php endif ?>
     
-    <?php include('pagination.php') ?>
+        <?php include('pagination.php') ?>
 </div>
