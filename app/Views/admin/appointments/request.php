@@ -3,32 +3,27 @@
 
     <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Add Record</button>
 
-    <?php if(!$announcement_data): ?>
+    <?php if(!$appointment_data): ?>
         <p>No records yet</p>
     <?php else: ?>
         <table class="table table-dark table-striped">
             <thead class="thead-dark">
                 <tr>
-                    <th>ID</th>
-                    <th>Message</th>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Schedule</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($announcement_data as $data): ?>
+                <?php foreach($appointment_data as $data): ?>
                 <tr>
-                    <th scope="row"><?= $data['id'] ?></th>
+                    <th scope="row"><?= $data['userId'] ?></th>
+                    <th scope="row"><?= $data['user'] ?></th>
+                    <td scope="col"><?= $data['schedule'] ?></td>
                     <td scope="col">
-                        <?php if(strlen($data['message']) > 50): ?>
-                        <?php
-                            $maxLength = 50;
-                            $data['message'] = substr($data['message'], 0, $maxLength);
-                        ?>
-                        <?= $data['message'] ?>
-                        <?php endif ?>
-                    </td>
-                    <td scope="col">
-                        <button type="button" class="btn btn-success">View</button>
+                        <button type="button" class="btn btn-success">Approve</button>
+                        <button type="button" class="btn btn-danger">Reject</button>
                     </td>
                 </tr>
                 <?php endforeach ?>

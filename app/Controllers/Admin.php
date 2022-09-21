@@ -2,6 +2,11 @@
 
 namespace App\Controllers;
 
+use App\Models\UserModel;
+use App\Models\DeceasedModel;
+use App\Models\AppointmentModel;
+use App\Models\AnnouncementModel;
+
 class Admin extends BaseController
 {
     public function __construct(){
@@ -12,7 +17,7 @@ class Admin extends BaseController
         return [
             [
                 'name' => 'Accounts',
-                'link' => 'Admin/'
+                'link' => 'Admin/accounts'
             ],
             [
                 'name' => 'Deceaseds',
@@ -37,67 +42,170 @@ class Admin extends BaseController
         ];
     }
     
-    public function index(){
-        
-        $data['title'] = 'Accounts';
-        $data['links'] = $this->links();
+    public function accounts($roles = 'admin'){
 
-        $html['body'] = view('extras/navigation', $data)
-        . view('admin/accounts');
-        $html['head'] = view('extras/head', $data);
-        $html['sidebar'] = view('extras/sidebar', $data);
+        $userModel = new UserModel();
+        $data = [
+            'title' => 'Accounts',
+            'links' => $this->links(),
+            'cards' => [
+                [
+                    'number' => $userModel->where('roles = "admin"')->countAllResults(),
+                    'title' => 'Admins',
+                    'icon' => 'user',
+                    'link' => base_url('Admin/accounts/admin')
+                ],
+                [
+                    'number' => $userModel->where('roles = "user"')->countAllResults(),
+                    'title' => 'Users',
+                    'icon' => 'user',
+                    'link' => base_url('Admin/accounts/user')
+                ]
+            ],
+            'roles' => $roles,
+            'user_data' => $userModel->where('roles = ', $roles)->orderBy('id', 'DESC')->paginate(10),
+            'pagination_link' => $userModel->pager
+        ];
+        $html = [
+            'body' => view('extras/navigation', $data)
+            . view('components/cards', $data )
+            . view('admin/accounts/' . $roles, $data ),
+            'head' => view('extras/head', $data),
+            'sidebar' => view('extras/sidebar', $data)
+        ];
 
         return view('extras/body', $html);
     }
 
     public function deceaseds(){
-        
-        $data['title'] = 'Deceaseds';
-        $data['links'] = $this->links();
 
-        $html['body'] = view('extras/navigation', $data)
-        . view('admin/accounts');
-        $html['head'] = view('extras/head', $data);
-        $html['sidebar'] = view('extras/sidebar', $data);
+        $deceasedModel = new DeceasedModel();
+
+        $data = [
+            'title' => 'Deceaseds',
+            'links' => $this->links(),
+            'cards' => [
+                [
+                    'number' => 0,
+                    'title' => 'Deceased',
+                    'icon' => 'user'
+                ]
+            ],
+            'deceased_data' => $deceasedModel->orderBy('id', 'DESC')->paginate(10),
+            'pagination_link' => $deceasedModel->pager
+        ];
+        $html = [
+            'body' => view('extras/navigation', $data)
+            . view('components/cards', $data )
+            . view('admin/deceaseds', $data),
+            'head' => view('extras/head', $data),
+            'sidebar' => view('extras/sidebar', $data)
+        ];
 
         return view('extras/body', $html);
     }
 
     public function announcements(){
-        
-        $data['title'] = 'Announcements';
-        $data['links'] = $this->links();
 
-        $html['body'] = view('extras/navigation', $data)
-        . view('admin/accounts');
-        $html['head'] = view('extras/head', $data);
-        $html['sidebar'] = view('extras/sidebar', $data);
+        $announcementModel = new AnnouncementModel();
+
+        $data = [
+            'title' => 'Announcements',
+            'links' => $this->links(),
+            'cards' => [
+                [
+                    'number' => 0,
+                    'title' => 'Deceased',
+                    'icon' => 'user'
+                ]
+            ],
+            'announcement_data' => $announcementModel->orderBy('id', 'DESC')->paginate(10),
+            'pagination_link' => $announcementModel->pager
+        ];
+
+        $html = [
+            'body' => view('extras/navigation', $data)
+            . view('admin/announcements', $data),
+            'head' => view('extras/head', $data),
+            'sidebar' => view('extras/sidebar', $data)
+        ];
 
         return view('extras/body', $html);
     }
 
-    public function appointments(){
-        
-        $data['title'] = 'Announcements';
-        $data['links'] = $this->links();
+    public function appointments($status = 'request'){
 
-        $html['body'] = view('extras/navigation', $data)
-        . view('admin/accounts');
-        $html['head'] = view('extras/head', $data);
-        $html['sidebar'] = view('extras/sidebar', $data);
+        $appointmentModel = new AppointmentModel();
+
+        function getName($rows){
+            $userModel = new UserModel();
+            $raws = [];
+            
+            foreach($rows as $row){
+                $userInfo = $userModel->where('id = 2')->first();
+                array_push($raws, $row + [
+                    'user' => $userInfo['firstName'] . ' ' . $userInfo['lastName'],
+                ]);
+            }
+            return $raws;
+        }
+
+        $data = [
+            'title' => 'Appointments',
+            'links' => $this->links(),
+            'cards' => [
+                [
+                    'number' => $appointmentModel->where('status = "request"')->countAllResults(),
+                    'title' => 'Requests',
+                    'icon' => 'calendar',
+                    'link' => base_url('Admin/appointments/request')
+                ],
+                [
+                    'number' => $appointmentModel->where('status = "approved"')->countAllResults(),
+                    'title' => 'Approved',
+                    'icon' => 'calendar',
+                    'link' => base_url('Admin/appointments/approved')
+                ]
+            ],
+            'status' => $status,
+            'appointment_data' => getName($appointmentModel->where('status = ', $status)->orderBy('id', 'DESC')->paginate(10)),
+            'pagination_link' => $appointmentModel->pager
+        ];
+        $html = [
+            'body' => view('extras/navigation', $data)
+            . view('components/cards', $data )
+            . view('admin/appointments/' . $status, $data),
+            'head' => view('extras/head', $data),
+            'sidebar' => view('extras/sidebar', $data)
+        ];
+
 
         return view('extras/body', $html);
     }
 
     public function settings(){
-        
-        $data['title'] = 'Settings';
-        $data['links'] = $this->links();
 
-        $html['body'] = view('extras/navigation', $data)
-        . view('admin/accounts');
-        $html['head'] = view('extras/head', $data);
-        $html['sidebar'] = view('extras/sidebar', $data);
+        $userModel = new UserModel();
+        
+        $data = [
+            'title' => 'Settings',
+            'links' => $this->links(),
+            'cards' => [
+                [
+                    'number' => 0,
+                    'title' => 'Deceased',
+                    'icon' => 'user'
+                ]
+            ],
+            'user_data' => $userModel->where('id = 1')->orderBy('id', 'DESC')->first(),
+            'pagination_link' => $userModel->pager
+        ];
+        $html = [
+            'body' => view('extras/navigation', $data)
+            . view('components/settings', $data),
+            'head' => view('extras/head', $data),
+            'sidebar' => view('extras/sidebar', $data)
+        ];
 
         return view('extras/body', $html);
     }
@@ -108,7 +216,7 @@ class Admin extends BaseController
         $data['links'] = $this->links();
 
         $html['body'] = view('extras/navigation', $data)
-        . view('admin/accounts');
+        . view('admin/logout');
         $html['head'] = view('extras/head', $data);
         $html['sidebar'] = view('extras/sidebar', $data);
 

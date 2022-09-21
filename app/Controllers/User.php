@@ -30,7 +30,7 @@ class User extends BaseController
     }
     
     public function index(){
-        
+
         $data['title'] = 'Main';
         $data['links'] = $this->links();
 
