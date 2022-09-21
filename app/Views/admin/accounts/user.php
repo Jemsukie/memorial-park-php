@@ -1,53 +1,54 @@
 <div class="container mt-2">
     <h2><?= ucwords($roles) ?></h2>
     <?php if(!$user_data): ?>
-        <p>No records yet</p>
+    <p>No records yet</p>
     <?php else: ?>
-        <table class="table table-dark table-striped">
-            <thead class="thead-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Email</th>
-                    <th>Name</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach($user_data as $data): ?>
-                <tr>
-                    <th scope="row"><?= $data['id'] ?></th>
-                    <td scope="col"><?= $data['email'] ?></td>
-                    <td scope="col"><?= $data['firstName'] ?> <?= $data['lastName'] ?></td>
-                    <td scope="col">
-                        <button type="button" class="btn btn-success" onClick="makeAdmin(<?= $data['id'] ?>)">Make Admin</button>
-                        <button type="button" class="btn btn-danger" onClick="deleteUser(<?= $data['id'] ?>)">Delete</button>
-                    </td>
-                </tr>
-                <?php endforeach ?>
-            </tbody>
+    <table class="table table-dark table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($user_data as $data): ?>
+            <tr>
+                <th scope="row"><?= $data['id'] ?></th>
+                <td scope="col"><?= $data['email'] ?></td>
+                <td scope="col"><?= $data['firstName'] ?> <?= $data['lastName'] ?></td>
+                <td scope="col">
+                    <button type="button" class="btn btn-success" onClick="makeAdmin(<?= $data['id'] ?>)">Make
+                        Admin</button>
+                    <button type="button" class="btn btn-danger"
+                        onClick="deleteUser(<?= $data['id'] ?>)">Delete</button>
+                </td>
+            </tr>
+            <?php endforeach ?>
+        </tbody>
 
-        </table>
-    <?php endif ?>
-
+    </table>
 
     <?php include('pagination.php') ?>
     <script>
-        function makeAdmin(id){
-            const confirm = window.confirm('Are you sure to make this an Admin?')
-            
-            if(confirm){
-                window.location.href = "<?= base_url('Admin/makeAdmin') ?>" + `/${id}`
-            }
-            return false
-        }
+    function makeAdmin(id) {
+        const confirm = window.confirm('Are you sure to make this an Admin?')
 
-        function deleteUser(id){
-            const confirm = window.confirm('Are you sure to delete this User?')
-            
-            if(confirm){
-                window.location.href = "<?= base_url('Admin/deleteUser') ?>" + `/${id}`
-            }
-            return false
+        if (confirm) {
+            window.location.href = "<?= base_url('Admin/makeAdmin') ?>" + `/${id}`
         }
+        return false
+    }
+
+    function deleteUser(id) {
+        const confirm = window.confirm('Are you sure to delete this User?')
+
+        if (confirm) {
+            window.location.href = "<?= base_url('Admin/deleteUser') ?>" + `/${id}`
+        }
+        return false
+    }
     </script>
+    <?php endif ?>
 </div>

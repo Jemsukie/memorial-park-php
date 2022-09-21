@@ -136,6 +136,7 @@ class Admin extends BaseController
                     'icon' => 'user'
                 ]
             ],
+            'createModalForm' => view('admin/deceaseds/createModalForm'),
             'filter' => $filter,
             'deceased_data' => $deceasedModel->where($setFilter)->orderBy('id', 'DESC')->paginate(10),
             'pagination_link' => $deceasedModel->pager
@@ -143,12 +144,77 @@ class Admin extends BaseController
         $html = [
             'body' => view('extras/navigation', $data)
             . view('components/cards', $data )
-            . view('admin/deceaseds', $data),
+            . view('admin/deceaseds/list', $data),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
 
         return view('extras/body', $html);
+    }
+
+    public function createDeceased(){
+        $deceasedModel = new DeceasedModel();
+
+            $values = [
+                'firstName' => $this->request->getPost('firstName'),
+                'lastName' => $this->request->getPost('lastName'),
+                'dateBorn' => $this->request->getPost('dateBorn'),
+                'dateDied' => $this->request->getPost('dateDied'),
+                'latitude' => $this->request->getPost('latitude'),
+                'longitude' => $this->request->getPost('longitude'),
+                'createdAt' => date("Y-m-d h:i:s"),
+                'adminId' => 1
+            ];
+
+            $deceasedModel->insert($values);
+            return redirect()->to(base_url('/Admin/deceaseds'))->with('success', 'Added Record Successfully!');
+    }
+
+    public function viewDeceased($id){
+        $deceasedModel = new DeceasedModel();
+
+        $data = [
+            'title' => 'Deceaseds',
+            'links' => $this->links(),
+            'deceased_data' => $deceasedModel->where('id', $id)->first(),
+            'map' => view('highcharts/map')
+        ];
+        $html = [
+            'body' => view('extras/navigation', $data)
+            . view('admin/deceaseds/viewDeceased', $data),
+            'head' => view('extras/head', $data),
+            'sidebar' => view('extras/sidebar', $data)
+        ];
+
+        return view('extras/body', $html);
+    }
+
+    public function updateDeceased(){
+        $session = \Config\Services::session();
+        $deceasedModel = new DeceasedModel();
+
+        $input = [
+            'firstName' => $this->request->getPost('firstName'),
+            'lastName' => $this->request->getPost('lastName'),
+            'dateBorn' => $this->request->getPost('dateBorn'),
+            'dateDied' => $this->request->getPost('dateDied'),
+            'latitude' => $this->request->getPost('latitude'),
+            'longitude' => $this->request->getPost('longitude')
+        ];
+
+        $deceasedModel->update($this->request->getPost('id'), $input);
+
+        $session->setFlashdata('success', 'Record Updated!');
+		return $this->response->redirect(base_url('/Admin/deceaseds'));
+    }
+
+    public function deleteDeceased($id){
+        $session = \Config\Services::session();
+        $deceasedModel = new DeceasedModel();
+
+        $deceasedModel->where('id', $id)->delete($id);
+        $session->setFlashdata('success', 'Record Successfully Deleted!');
+		return $this->response->redirect(base_url('/Admin/deceaseds'));
     }
 
     public function announcements(){

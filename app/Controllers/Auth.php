@@ -110,10 +110,7 @@ class Auth extends BaseController{
 
         if(!$validation){
             //If the validation is wrong, then this will flash errors on signup.php
-            // return view('Auth/signup', ['validation' => $this->validator]);
-            // return view('extras/body', $html)
             return $this->signup(['validation' => $this->validator]);
-            // return redirect()->to(base_url('/Auth/signup'))->with('fail', json_encode(['validation' => $this->validator]));
         }
         else{
             //If all the requirements are met, then you will be able to insert the information to the database
@@ -130,11 +127,9 @@ class Auth extends BaseController{
 
             $query = $userModel->insert($values);
             if(!$query){
-                echo 'failed';
                 return redirect()->to(base_url('/Auth/signup'))->with('fail', 'Sorry, something went wrong...');
             }
             else{
-                echo 'success';
                 return redirect()->to(base_url('/Auth/login'))->with('success', 'You are now registration request was successful!');
             }
         }

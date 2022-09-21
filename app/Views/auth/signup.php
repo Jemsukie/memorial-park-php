@@ -3,19 +3,19 @@
     <form class="mt-3 mb-5" action="<?= base_url('/Auth/saveCheck')?>" method="post">
         <div class="form-group mt-2">
             <label for="input-email">Email address</label>
-            <input type="email" class="form-control" id="input-email" aria-describedby="emailHelp"
+            <input type="email" class="form-control" id="input-email"
                 placeholder="Enter email" name="email" required>
             <span class="text-danger"><?= isset($validation) ? display_error($validation, 'email') : '' ?></span>
         </div>
         <div class="form-group mt-2">
             <label for="input-firstName">First Name</label>
-            <input type="text" class="form-control" id="input-firstName" aria-describedby="emailHelp"
+            <input type="text" class="form-control" id="input-firstName"
                 placeholder="Enter first name" name="firstName" required>
             <span class="text-danger"><?= isset($validation) ? display_error($validation, 'firstName') : '' ?></span>
         </div>
         <div class="form-group mt-2">
             <label for="input-lastName">Last Name</label>
-            <input type="text" class="form-control" id="input-lastName" aria-describedby="emailHelp"
+            <input type="text" class="form-control" id="input-lastName"
                 placeholder="Enter last name" name="lastName" required>
             <span class="text-danger"><?= isset($validation) ? display_error($validation, 'lastName') : '' ?></span>
         </div>
