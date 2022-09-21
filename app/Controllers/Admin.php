@@ -41,6 +41,10 @@ class Admin extends BaseController
             ]
         ];
     }
+
+    public function index(){
+        return $this->accounts();
+    }
     
     public function accounts($roles = 'admin'){
 
@@ -79,6 +83,17 @@ class Admin extends BaseController
 
     public function deceaseds(){
 
+        $filter = [
+            'firstName' => $this->request->getVar('firstName'),
+            'lastName' => $this->request->getVar('lastName'),
+            'dateBorn' => $this->request->getVar('dateBorn'),
+            'dateDied' => $this->request->getVar('dateDied'),
+        ];
+        $setFilter = 'firstName like "%'. $filter['firstName'] 
+        . '%" AND lastName like "%'. $filter['lastName']
+        . '%" AND dateBorn like "%'. $filter['dateBorn']
+        . '%" AND dateDied like "%'. $filter['dateDied'] . '%"';
+
         $deceasedModel = new DeceasedModel();
 
         $data = [
@@ -86,12 +101,13 @@ class Admin extends BaseController
             'links' => $this->links(),
             'cards' => [
                 [
-                    'number' => 0,
+                    'number' => $deceasedModel->orderBy('id', 'DESC')->countAllResults(),
                     'title' => 'Deceased',
                     'icon' => 'user'
                 ]
             ],
-            'deceased_data' => $deceasedModel->orderBy('id', 'DESC')->paginate(10),
+            'filter' => $filter,
+            'deceased_data' => $deceasedModel->where($setFilter)->orderBy('id', 'DESC')->paginate(10),
             'pagination_link' => $deceasedModel->pager
         ];
         $html = [
@@ -197,8 +213,7 @@ class Admin extends BaseController
                     'icon' => 'user'
                 ]
             ],
-            'user_data' => $userModel->where('id = 1')->orderBy('id', 'DESC')->first(),
-            'pagination_link' => $userModel->pager
+            'user_data' => $userModel->where('id = 1')->orderBy('id', 'DESC')->first()
         ];
         $html = [
             'body' => view('extras/navigation', $data)

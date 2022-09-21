@@ -1,8 +1,6 @@
 <div class="container mt-2">
     <h2><?= ucwords($title) ?></h2>
 
-    <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Add Record</button>
-
     <?php if(!$appointment_data): ?>
         <p>No records yet</p>
     <?php else: ?>
@@ -32,12 +30,5 @@
         </table>
     <?php endif ?>
     
-        <?php if($pagination_link): ?>
-            <div>
-            <?php 
-                $pagination_link->setPath('memo/Admin/accounts/'. $roles);
-            ?>
-            <?= $pagination_link->links() ?>
-            </div>
-        <?php endif ?>
+    <?php include('pagination.php') ?>
 </div>

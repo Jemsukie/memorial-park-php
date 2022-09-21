@@ -1,6 +1,42 @@
 <div class="container mt-2">
     <h2><?= ucwords($title) ?></h2>
 
+    <div>
+        <form class="my-3" action="<?php echo base_url('/Admin/deceaseds')?>" method="post">
+            <button type="submit" class="btn btn-primary mt-2">Filter</button>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group mt-2">
+                        <label for="input-firstName">First Name</label>
+                        <input type="text" class="form-control" id="input-firstName" placeholder="First Name"
+                            name="firstName" value="<?= $filter['firstName']?>">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group mt-2">
+                        <label for="input-lastName">Last Name</label>
+                        <input type="text" class="form-control" id="input-lastName" placeholder="Last Name"
+                            name="lastName" value="<?= $filter['lastName']?>">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group mt-2">
+                        <label for="input-dateBorn">Date Born</label>
+                        <input type="date" class="form-control" id="input-dateBorn" placeholder="Date Born"
+                            name="dateBorn" value="<?= $filter['dateBorn']?>">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group mt-2">
+                        <label for="input-dateDied">Date Died</label>
+                        <input type="date" class="form-control" id="input-email" placeholder="Date Died"
+                            name="dateDied" value="<?= $filter['dateDied']?>">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <button type="button" class="btn btn-primary"><i class="fa fa-plus"></i> Add Record</button>
 
     <?php if(!$deceased_data): ?>
@@ -34,7 +70,7 @@
         <?php if($pagination_link): ?>
             <div>
             <?php 
-                $pagination_link->setPath('memo/Admin/accounts/'. $roles);
+                $pagination_link->setPath('memo/Admin/deceaseds/'. $roles);
             ?>
             <?= $pagination_link->links() ?>
             </div>
