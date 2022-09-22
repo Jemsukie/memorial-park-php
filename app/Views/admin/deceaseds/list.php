@@ -69,10 +69,10 @@
 
     </table>
 
-    <?php if($pagination_link): ?>
+    <?php if(isset($pagination_link)): ?>
     <div>
         <?php 
-                $pagination_link->setPath('memo/Admin/deceaseds/'. $roles);
+                $pagination_link->setPath('memo/Admin/deceaseds/');
             ?>
         <?= $pagination_link->links() ?>
     </div>

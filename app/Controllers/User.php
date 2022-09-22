@@ -114,6 +114,7 @@ class User extends BaseController
         $data = [
             'title' => 'Settings',
             'links' => $this->links(),
+            'scope' => 'User',
             'user_data' => $userModel->where('id = 1')->orderBy('id', 'DESC')->first()
         ];
         $html = [

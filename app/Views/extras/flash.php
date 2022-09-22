@@ -16,10 +16,10 @@
 
 
 <!-- This shows errors for validation -->
-<?php if($validation):?>
+<?php if(isset($validation) && $validation !== []):?>
 <div class="container">
     <div class="alert alert-danger">
-        <ul><?= $validation->listErrors(); ?></ul>
+            <?= $validation->listErrors() ?>
     </div>
 </div>
 <?php endif?>

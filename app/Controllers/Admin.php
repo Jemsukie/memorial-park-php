@@ -138,7 +138,7 @@ class Admin extends BaseController
             ],
             'createModalForm' => view('admin/deceaseds/createModalForm'),
             'filter' => $filter,
-            'deceased_data' => $deceasedModel->where($setFilter)->orderBy('id', 'DESC')->paginate(10),
+            'deceased_data' => $deceasedModel->where($setFilter)->orderBy('createdAt', 'DESC')->paginate(10),
             'pagination_link' => $deceasedModel->pager
         ];
         $html = [
@@ -224,25 +224,71 @@ class Admin extends BaseController
         $data = [
             'title' => 'Announcements',
             'links' => $this->links(),
-            'cards' => [
-                [
-                    'number' => 0,
-                    'title' => 'Deceased',
-                    'icon' => 'user'
-                ]
-            ],
-            'announcement_data' => $announcementModel->orderBy('id', 'DESC')->paginate(10),
+            'createModalForm' => view('admin/announcements/createModalForm'),
+            'announcement_data' => $announcementModel->orderBy('id', 'ASC')->paginate(10),
             'pagination_link' => $announcementModel->pager
         ];
 
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('admin/announcements', $data),
+            . view('admin/announcements/list', $data),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
 
         return view('extras/body', $html);
+    }
+
+    public function createAnnouncements(){
+        $announcementModel = new AnnouncementModel();
+
+            $values = [
+                'message' => $this->request->getPost('message'),
+                'createdAt' => date("Y-m-d h:i:s"),
+                'adminId' => 1
+            ];
+
+            $announcementModel->insert($values);
+            return redirect()->to(base_url('/Admin/announcements'))->with('success', 'Added Record Successfully!');
+    }
+
+    public function viewAnnouncements($id){
+        $announcementModel = new AnnouncementModel();
+
+        $data = [
+            'title' => 'Announcements',
+            'links' => $this->links(),
+            'announcement_data' => $announcementModel->where('id', $id)->first()
+        ];
+        $html = [
+            'body' => view('extras/navigation', $data)
+            . view('admin/announcements/viewMessage', $data),
+            'head' => view('extras/head', $data),
+            'sidebar' => view('extras/sidebar', $data)
+        ];
+
+        return view('extras/body', $html);
+    }
+
+    public function updateAnnouncements(){
+        $session = \Config\Services::session();
+        $announcementModel = new AnnouncementModel();
+
+        $input = ['message' => $this->request->getPost('message')];
+
+        $announcementModel->update($this->request->getPost('id'), $input);
+
+        $session->setFlashdata('success', 'Record Updated!');
+		return $this->response->redirect(base_url('/Admin/announcements'));
+    }
+
+    public function deleteAnnouncements($id){
+        $session = \Config\Services::session();
+        $announcementModel = new AnnouncementModel();
+
+        $announcementModel->where('id', $id)->delete($id);
+        $session->setFlashdata('success', 'Record Successfully Deleted!');
+		return $this->response->redirect(base_url('/Admin/announcements'));
     }
 
     public function appointments($status = 'request'){
@@ -254,7 +300,7 @@ class Admin extends BaseController
             $raws = [];
             
             foreach($rows as $row){
-                $userInfo = $userModel->where('id = 2')->first();
+                $userInfo = $userModel->where('id = ', $row['userId'])->first();
                 array_push($raws, $row + [
                     'user' => $userInfo['firstName'] . ' ' . $userInfo['lastName'],
                 ]);
@@ -280,7 +326,7 @@ class Admin extends BaseController
                 ]
             ],
             'status' => $status,
-            'appointment_data' => getName($appointmentModel->where('status = ', $status)->orderBy('id', 'DESC')->paginate(10)),
+            'appointment_data' => getName($appointmentModel->where('status = ', $status)->orderBy('createdAt', 'DESC')->paginate(10)),
             'pagination_link' => $appointmentModel->pager
         ];
         $html = [
@@ -295,20 +341,35 @@ class Admin extends BaseController
         return view('extras/body', $html);
     }
 
-    public function settings(){
+    public function approveAppointment($id){
+        $session = \Config\Services::session();
+        $appointmentModel = new AppointmentModel();
+
+        $appointmentModel->update($id, ['status' => 'approved']);
+
+        $session->setFlashdata('success', 'Appointment Schedule Approved!');
+		return $this->response->redirect(base_url('/Admin/appointments'));
+    }
+
+    public function cancelAppointment($id){
+        $session = \Config\Services::session();
+        $appointmentModel = new AppointmentModel();
+
+        $appointmentModel->where('id', $id)->delete($id);
+
+        $session->setFlashdata('success', 'Appointment Cancelled!');
+		return $this->response->redirect(base_url('/Admin/appointments'));
+    }
+
+    public function settings($formValidation = []){
 
         $userModel = new UserModel();
-        
+
         $data = [
             'title' => 'Settings',
             'links' => $this->links(),
-            'cards' => [
-                [
-                    'number' => 0,
-                    'title' => 'Deceased',
-                    'icon' => 'user'
-                ]
-            ],
+            'scope' => 'Admin',
+            'validation' => $formValidation,
             'user_data' => $userModel->where('id = 1')->orderBy('id', 'DESC')->first()
         ];
         $html = [
@@ -319,6 +380,106 @@ class Admin extends BaseController
         ];
 
         return view('extras/body', $html);
+    }
+
+    public function updateInfo(){
+        $session = \Config\Services::session();
+        $userModel = new UserModel();
+
+        $validation = $this->validate([
+            'email' => [
+                'rules' => 'required|valid_email',
+                'errors' => [
+                    'required' => 'Your email is required!',
+                    'valid_email' => 'Invalid email!'
+                ]
+            ],//This error messages back if the id is required or id already taken.
+            'firstName' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Your first name is required!',
+                ]
+            ],//Name required
+            'lastName' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Your last name is required!',
+                ]
+            ],//Name required
+        ]);
+
+        if(!$validation){
+            //If the validation is wrong, then this will flash errors on settings.php
+            return $this->settings($this->validator);
+        }else{
+
+            $input = [
+                'email' => $this->request->getVar('email'),
+                'firstName' => $this->request->getVar('firstName'),
+                'lastName' => $this->request->getVar('lastName'),
+            ];
+
+            $userModel->update($this->request->getVar('id'), $input);
+
+            $session->setFlashdata('success', 'Account Updated!');
+            return $this->response->redirect(base_url('/Admin/settings'));
+        }
+    }
+
+    public function updatePassword(){
+        $session = \Config\Services::session();
+        $userModel = new UserModel();
+
+        $validation = $this->validate([
+            'oldPassword' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Your password is required!'
+                ]
+            ],
+            'password' => [
+                'rules' => 'required|min_length[5]|max_length[25]',
+                'errors' => [
+                    'required' => 'Your password is required!',
+                    'min_length' => 'Password must have atleast 5 characters in length!',
+                    'max_length' => 'Password must not have more than 25 characters in length!'
+                ]
+            ],//Password required, must have minimum length of 5
+            'confirmPassword' => [
+                'rules' => 'required|min_length[5]|max_length[25]|matches[password]',
+                'errors' => [
+                    'required' => 'Confirm password is required.',
+                    'min_length' => 'Password must have atleast 5 characters in length.',
+                    'max_length' => 'Password must not have more than 25 characters in length!',
+                    'matches' => 'Password do not match!'
+                ]
+            ]//Confirm password required, must have minimum length of 5 and must match with password
+        ]);
+
+        if(!$validation){
+            //If the validation is wrong, then this will flash errors on settings.php
+            return $this->settings($this->validator);
+        }else{
+
+            $oldPasswordInput = $this->request->getVar('oldPassword');
+            $id = $this->request->getVar('id');
+            $getAccount = $userModel->where('id', $id)->first();
+
+            if($getAccount['password'] === $oldPasswordInput){
+
+                $input = [
+                    'password' => $this->request->getVar('password')
+                ];
+                $userModel->update($this->request->getVar('id'), $input);
+
+                $session->setFlashdata('success', 'Password Updated!');
+                return $this->response->redirect(base_url('/Admin/settings'));
+            } else{
+                $session->setFlashdata('failed', 'Wrong Password!');
+                return $this->response->redirect(base_url('/Admin/settings'));
+            }
+        }
+        
     }
 
     public function logout(){

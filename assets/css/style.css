@@ -43,3 +43,6 @@ body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
     }
 }
 
+.errors ul {
+    list-style-type: none;
+}

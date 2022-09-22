@@ -9,7 +9,7 @@
 
                     <p><i class="fa fa-<?= $card['icon'] ?>"></i> <?= $card['title'] ?></p>
 
-                    <?php if($card['link']): ?>
+                    <?php if(isset($card['link'])): ?>
                     <a href="<?= $card['link'] ?>" class="btn btn-primary">More info <i class="fas fa-arrow-circle-right"></i></a>
                     <?php endif ?>
                 </div>
