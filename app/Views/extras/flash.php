@@ -19,7 +19,9 @@
 <?php if(isset($validation) && $validation !== []):?>
 <div class="container">
     <div class="alert alert-danger">
-            <?= $validation->listErrors() ?>
+        <?php foreach($validation as $validate): ?>
+            <?= $validate !== '' ? $validate . '<br>' : '' ?>
+        <?php endforeach ?>
     </div>
 </div>
 <?php endif?>

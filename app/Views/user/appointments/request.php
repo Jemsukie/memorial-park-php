@@ -1,5 +1,5 @@
 <div class="container mt-2">
-    <?php include('modal.php') ?>
+    <?php include('createModal.php') ?>
 
     <?php if(!$appointment_data): ?>
     <p>No records yet</p>
@@ -16,8 +16,8 @@
             <tr>
                 <td scope="col"><?= $data['schedule'] ?></td>
                 <td scope="col">
-                    <button type="button" class="btn btn-success">Update</button>
-                    <button type="button" class="btn btn-danger">Cancel</button>
+                    <button type="button" class="btn btn-success" onClick="viewAppointment(<?= $data['id'] ?>)">View</button>
+                    <button type="button" class="btn btn-danger" onClick="cancelAppointment(<?= $data['id'] ?>)">Cancel</button>
                 </td>
             </tr>
             <?php endforeach ?>
@@ -27,4 +27,21 @@
     <?php endif ?>
 
     <?php include('pagination.php') ?>
+
+    <script>
+    function viewAppointment(id) {
+        const confirm = window.confirm('Browse this record?')
+        if (confirm) {
+            window.location.href = "<?= base_url('User/viewAppointment') ?>" + `/${id}`
+        }
+        return false
+    }
+    function cancelAppointment(id) {
+        const confirm = window.confirm('Cancel this appointment?')
+        if (confirm) {
+            window.location.href = "<?= base_url('User/cancelAppointment') ?>" + `/${id}`
+        }
+        return false
+    }
+    </script>
 </div>

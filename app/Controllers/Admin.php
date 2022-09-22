@@ -82,22 +82,19 @@ class Admin extends BaseController
     }
 
     public function makeAdmin($id){
-        $session = \Config\Services::session();
         $userModel = new UserModel();
 
         $userModel->update($id, ['roles' => 'admin']);
-
-        $session->setFlashdata('success', 'Admin User Created!');
-		return $this->response->redirect(base_url('/Admin'));
+        
+        return redirect()->to(base_url('/Admin'))->with('success', 'Admin User Created!');
     }
 
     public function deleteUser($id){
-        $session = \Config\Services::session();
         $userModel = new UserModel();
 
         function deleteAppointments($userId){
             $appointmentModel = new AppointmentModel();
-            $rows = $appointmentModel->where('userId = ' . $userId)->paginate();
+            $rows = $appointmentModel->where('userId = ' . $userId)->findAll();
 
             foreach($rows as $row){
                 $appointmentModel->where('id', $row['id'])->delete($row['id']);
@@ -107,8 +104,7 @@ class Admin extends BaseController
 
         if(deleteAppointments($id)){
             $userModel->where('id', $id)->delete($id);
-            $session->setFlashdata('success', 'Record Successfully Deleted!');
-		    return $this->response->redirect(base_url('/Admin'));
+            return redirect()->to(base_url('/Admin'))->with('success', 'Record Successfully Deleted!');
         }
     }
 
@@ -173,24 +169,29 @@ class Admin extends BaseController
     public function viewDeceased($id){
         $deceasedModel = new DeceasedModel();
 
-        $data = [
-            'title' => 'Deceaseds',
-            'links' => $this->links(),
-            'deceased_data' => $deceasedModel->where('id', $id)->first(),
-            'map' => view('highcharts/map')
-        ];
-        $html = [
-            'body' => view('extras/navigation', $data)
-            . view('admin/deceaseds/viewDeceased', $data),
-            'head' => view('extras/head', $data),
-            'sidebar' => view('extras/sidebar', $data)
-        ];
+        $deceased_data = $deceasedModel->find($id);
 
-        return view('extras/body', $html);
+        if($deceased_data){
+            $data = [
+                'title' => 'Deceaseds',
+                'links' => $this->links(),
+                'deceased_data' => $deceased_data,
+                'map' => view('highcharts/map')
+            ];
+            $html = [
+                'body' => view('extras/navigation', $data)
+                . view('admin/deceaseds/viewDeceased', $data),
+                'head' => view('extras/head', $data),
+                'sidebar' => view('extras/sidebar', $data)
+            ];
+    
+            return view('extras/body', $html);
+        } else{
+            return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
+        }
     }
 
     public function updateDeceased(){
-        $session = \Config\Services::session();
         $deceasedModel = new DeceasedModel();
 
         $input = [
@@ -204,17 +205,23 @@ class Admin extends BaseController
 
         $deceasedModel->update($this->request->getPost('id'), $input);
 
-        $session->setFlashdata('success', 'Record Updated!');
-		return $this->response->redirect(base_url('/Admin/deceaseds'));
+        return redirect()->to(base_url('/Admin/deceaseds'))->with('success', 'Record Updated!');
     }
 
     public function deleteDeceased($id){
-        $session = \Config\Services::session();
         $deceasedModel = new DeceasedModel();
 
-        $deceasedModel->where('id', $id)->delete($id);
-        $session->setFlashdata('success', 'Record Successfully Deleted!');
-		return $this->response->redirect(base_url('/Admin/deceaseds'));
+        $deceased_info = $deceasedModel->find($id);
+
+        if($deceased_info){
+            $deceasedModel->where('id', $id)->delete($id);
+
+            return redirect()->to(base_url('/Admin/deceaseds'))->with('success', 'Record Successfully Deleted!');
+        } else{
+            return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
+        }
+
+        
     }
 
     public function announcements(){
@@ -255,40 +262,50 @@ class Admin extends BaseController
     public function viewAnnouncements($id){
         $announcementModel = new AnnouncementModel();
 
-        $data = [
-            'title' => 'Announcements',
-            'links' => $this->links(),
-            'announcement_data' => $announcementModel->where('id', $id)->first()
-        ];
-        $html = [
-            'body' => view('extras/navigation', $data)
-            . view('admin/announcements/viewMessage', $data),
-            'head' => view('extras/head', $data),
-            'sidebar' => view('extras/sidebar', $data)
-        ];
+        $announcement_info = $announcementModel->find($id);
 
-        return view('extras/body', $html);
+        if($announcement_info){
+            $data = [
+                'title' => 'Announcements',
+                'links' => $this->links(),
+                'announcement_data' => $announcementModel->find($id)
+            ];
+            $html = [
+                'body' => view('extras/navigation', $data)
+                . view('admin/announcements/viewMessage', $data),
+                'head' => view('extras/head', $data),
+                'sidebar' => view('extras/sidebar', $data)
+            ];
+    
+            return view('extras/body', $html);
+        } else{
+            return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
+        }
+
     }
 
     public function updateAnnouncements(){
-        $session = \Config\Services::session();
         $announcementModel = new AnnouncementModel();
 
         $input = ['message' => $this->request->getPost('message')];
 
         $announcementModel->update($this->request->getPost('id'), $input);
 
-        $session->setFlashdata('success', 'Record Updated!');
-		return $this->response->redirect(base_url('/Admin/announcements'));
+        return redirect()->to(base_url('/Admin/announcements'))->with('success', 'Record Updated!');
     }
 
     public function deleteAnnouncements($id){
-        $session = \Config\Services::session();
         $announcementModel = new AnnouncementModel();
 
-        $announcementModel->where('id', $id)->delete($id);
-        $session->setFlashdata('success', 'Record Successfully Deleted!');
-		return $this->response->redirect(base_url('/Admin/announcements'));
+        $announcement_info = $announcementModel->find($id);
+
+        if($announcement_info){
+            $announcementModel->where('id', $id)->delete($id);
+            
+            return redirect()->to(base_url('/Admin/announcements'))->with('success', 'Record Successfully Deleted!');
+        } else{
+            return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
+        }
     }
 
     public function appointments($status = 'request'){
@@ -300,7 +317,7 @@ class Admin extends BaseController
             $raws = [];
             
             foreach($rows as $row){
-                $userInfo = $userModel->where('id = ', $row['userId'])->first();
+                $userInfo = $userModel->find($row['userId']);
                 array_push($raws, $row + [
                     'user' => $userInfo['firstName'] . ' ' . $userInfo['lastName'],
                 ]);
@@ -337,28 +354,35 @@ class Admin extends BaseController
             'sidebar' => view('extras/sidebar', $data)
         ];
 
-
         return view('extras/body', $html);
     }
 
     public function approveAppointment($id){
-        $session = \Config\Services::session();
         $appointmentModel = new AppointmentModel();
 
-        $appointmentModel->update($id, ['status' => 'approved']);
+        $appointment_info = $appointmentModel->find($id);
 
-        $session->setFlashdata('success', 'Appointment Schedule Approved!');
-		return $this->response->redirect(base_url('/Admin/appointments'));
+        if($appointment_info){
+            $appointmentModel->update($id, ['status' => 'approved']);
+            
+            return redirect()->to(base_url('/Admin/appointments'))->with('success', 'Appointment Schedule Approved!');
+        } else{
+            return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
+        }
     }
 
     public function cancelAppointment($id){
-        $session = \Config\Services::session();
         $appointmentModel = new AppointmentModel();
 
-        $appointmentModel->where('id', $id)->delete($id);
+        $appointment_info = $appointmentModel->find($id);
 
-        $session->setFlashdata('success', 'Appointment Cancelled!');
-		return $this->response->redirect(base_url('/Admin/appointments'));
+        if($appointment_info){
+            $appointmentModel->where('id', $id)->delete($id);
+            
+            return redirect()->to(base_url('/Admin/appointments'))->with('success', 'Appointment Cancelled!');
+        } else{
+            return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
+        }
     }
 
     public function settings($formValidation = []){
@@ -370,7 +394,7 @@ class Admin extends BaseController
             'links' => $this->links(),
             'scope' => 'Admin',
             'validation' => $formValidation,
-            'user_data' => $userModel->where('id = 1')->orderBy('id', 'DESC')->first()
+            'user_data' => $userModel->find(1)
         ];
         $html = [
             'body' => view('extras/navigation', $data)
@@ -383,7 +407,6 @@ class Admin extends BaseController
     }
 
     public function updateInfo(){
-        $session = \Config\Services::session();
         $userModel = new UserModel();
 
         $validation = $this->validate([
@@ -410,7 +433,11 @@ class Admin extends BaseController
 
         if(!$validation){
             //If the validation is wrong, then this will flash errors on settings.php
-            return $this->settings($this->validator);
+            return $this->settings([
+                $this->validator->showError('email'),
+                $this->validator->showError('firstName'),
+                $this->validator->showError('lastName')
+            ]);
         }else{
 
             $input = [
@@ -421,13 +448,11 @@ class Admin extends BaseController
 
             $userModel->update($this->request->getVar('id'), $input);
 
-            $session->setFlashdata('success', 'Account Updated!');
-            return $this->response->redirect(base_url('/Admin/settings'));
+            return redirect()->to(base_url('/Admin/settings'))->with('success', 'Account Updated!');
         }
     }
 
     public function updatePassword(){
-        $session = \Config\Services::session();
         $userModel = new UserModel();
 
         $validation = $this->validate([
@@ -458,12 +483,16 @@ class Admin extends BaseController
 
         if(!$validation){
             //If the validation is wrong, then this will flash errors on settings.php
-            return $this->settings($this->validator);
+            return $this->settings([
+                $this->validator->showError('oldPassword'),
+                $this->validator->showError('password'),
+                $this->validator->showError('confirmPassword')
+            ]);
         }else{
 
             $oldPasswordInput = $this->request->getVar('oldPassword');
             $id = $this->request->getVar('id');
-            $getAccount = $userModel->where('id', $id)->first();
+            $getAccount = $userModel->find($id);
 
             if($getAccount['password'] === $oldPasswordInput){
 
@@ -472,30 +501,13 @@ class Admin extends BaseController
                 ];
                 $userModel->update($this->request->getVar('id'), $input);
 
-                $session->setFlashdata('success', 'Password Updated!');
-                return $this->response->redirect(base_url('/Admin/settings'));
+                return redirect()->to(base_url('/Admin/settings'))->with('success', 'Password Updated!');
             } else{
-                $session->setFlashdata('failed', 'Wrong Password!');
-                return $this->response->redirect(base_url('/Admin/settings'));
+                return redirect()->to(base_url('/Admin/settings'))->with('fail', 'Wrong Password!');
             }
         }
         
     }
-
-    public function logout(){
-        
-        $data['title'] = 'Logout';
-        $data['links'] = $this->links();
-
-        $html['body'] = view('extras/navigation', $data)
-        . view('admin/logout');
-        $html['head'] = view('extras/head', $data);
-        $html['sidebar'] = view('extras/sidebar', $data);
-
-        return view('extras/body', $html);
-    }
-
-    
 }
 
 ?>

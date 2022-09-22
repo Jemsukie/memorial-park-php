@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row d-flex justify-content-center">
         <?php foreach($cards as $card): ?>
-        <div class="col-lg-3 col-6 m-3">
+        <div class="col-lg-3 col-md-6 m-3">
             <!-- small box -->
             <div class="small-box bg-light border border-dark">
                 <div class="inner p-3">

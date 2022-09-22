@@ -29,19 +29,30 @@ class Auth extends BaseController{
             ],
             [
                 'name' => 'Login',
-                'link' => 'Auth/logout'
+                'link' => 'Auth/login'
             ]
         ];
     }
 
-    public function login(){
+    private function news(){
+        $announcementModel = new AnnouncementModel();
+
+        $data['announcement_data'] = $announcementModel->findColumn('message');
+        shuffle($data['announcement_data']);
+
+        return view('extras/news', $data);
+    }
+
+    public function login($formValidation = []){
         $data = [
             'title' => 'Login',
             'links' => $this->links(),
+            'validation' => $formValidation,
+            'news' => $this->news()
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('auth/login'),
+            . view('Auth/login'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -49,15 +60,17 @@ class Auth extends BaseController{
         return view('extras/body', $html);
     }
 
-    public function signup($validation = []){
+    public function signup($formValidation = []){
 
         $data = [
             'title' => 'Sign Up',
             'links' => $this->links(),
+            'validation' => $formValidation,
+            'news' => $this->news()
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('auth/signup', $validation),
+            . view('Auth/signup'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -110,7 +123,13 @@ class Auth extends BaseController{
 
         if(!$validation){
             //If the validation is wrong, then this will flash errors on signup.php
-            return $this->signup(['validation' => $this->validator]);
+            return $this->signup([
+                $this->validator->showError('email'),
+                $this->validator->showError('firstName'),
+                $this->validator->showError('lastName'),
+                $this->validator->showError('password'),
+                $this->validator->showError('confirmPassword')
+            ]);
         }
         else{
             //If all the requirements are met, then you will be able to insert the information to the database
@@ -132,6 +151,48 @@ class Auth extends BaseController{
             else{
                 return redirect()->to(base_url('/Auth/login'))->with('success', 'You are now registration request was successful!');
             }
+        }
+    }
+
+    public function authCheck(){
+        $validation = $this->validate([
+            'email' => [
+                'rules' => 'required|is_not_unique[user.email]',
+                'errors' => [
+                    'required' => 'Your email is required!',
+                    'is_not_unique' => 'Your email is not yet registered to our system! Please create an account first.'
+                ]
+            ],//This error messages back if the id is required or id already taken.
+            'password' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Your password is required!'
+                ]
+            ],//Password required
+        ]);
+
+        if(!$validation){
+            //If the validation is wrong, then this will flash errors on login.php
+            return $this->login([
+                $this->validator->showError('email'),
+                $this->validator->showError('password')
+            ]);
+        } else{
+            $userModel = new UserModel();
+
+            $email = $this->request->getPost('email');
+            $password = $this->request->getPost('password');
+                    
+            $user_info = $userModel->where('email', $email)->first();
+
+            $check_password = strcmp($password, $user_info['password']);
+
+            if($check_password !== 0){
+                return redirect()->to(base_url('/Auth/login'))->with('fail', 'Incorrect password!')->withInput();
+            } else{
+                echo 'the';
+            }
+            
         }
     }
 
