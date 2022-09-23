@@ -203,7 +203,7 @@ class Auth extends BaseController{
 
     public function logout(){
         if(session()->get('isLoggedIn')){
-            session()->remove(['id', 'email', 'roles', 'isLoggedIn']);
+            session()->remove(['id', 'email', 'name', 'roles', 'isLoggedIn']);
             return redirect()->to(base_url('/Auth/login?access=out'))->with('fail', 'You are logged out!');
         } else{
             return redirect()->to(base_url('/'));

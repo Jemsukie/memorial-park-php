@@ -18,7 +18,7 @@
             <tr>
                 <th scope="row"><?= $data['userId'] ?></th>
                 <th scope="row"><?= $data['user'] ?></th>
-                <td scope="col"><?= $data['schedule'] ?></td>
+                <td scope="col"><?= date('M d\, Y h:i A', strtotime($data['schedule'])) ?></td>
                 <td scope="col">
                     <button type="button" class="btn btn-danger"
                         onClick="cancelAppointment(<?= $data['id'] ?>)">Cancel</button>

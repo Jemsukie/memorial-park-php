@@ -54,8 +54,8 @@
             <?php foreach($deceased_data as $data): ?>
             <tr>
                 <th scope="row"><?= $data['firstName'] ?> <?= $data['lastName'] ?></th>
-                <td scope="col"><?= $data['dateBorn'] ?></td>
-                <td scope="col"><?= $data['dateDied'] ?></td>
+                <td scope="col"><?= date('D M d\, Y', strtotime($data['dateBorn'])) ?></td>
+                <td scope="col"><?= date('D M d\, Y', strtotime($data['dateDied'])) ?></td>
                 <td scope="col">
                     <button type="button" class="btn btn-success" onClick="viewDeceased(<?= $data['id'] ?>)">View</button>
                 </td>

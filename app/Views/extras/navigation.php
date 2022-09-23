@@ -3,7 +3,9 @@
     <a class="navbar-brand" href="<?= base_url('Home/') ?>">
         <?= end($links)['name'] === 'Logout' ? 'Home' : '' ?>
     </a>
-    <h6 class="text-white ms-auto me-5"><?= session()->get('name') ? 'Hi ' . session()->get('name') . '!' : ''?></h6>
+    <?php if(session()->get('name')): ?>
+        <h6 class="text-white ms-auto me-5">Hi <?= session()->get('name') ?>!</h6>
+    <?php endif ?>
     
 </nav>
 <?= isset($news) ? $news : '' ?>
