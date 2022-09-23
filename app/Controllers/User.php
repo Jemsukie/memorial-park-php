@@ -9,7 +9,24 @@ use App\Models\AppointmentModel;
 class User extends BaseController
 {
     public function __construct(){
-        helper(['url', 'form']);
+        helper(['url', 'form', 'array']);
+        if (session()->get('roles') !== "user") {
+            echo $this->accessDeny(session()->get('roles'));
+            exit;
+        }
+    }
+
+    private function accessDeny($roles){
+        $data = [
+            'title' => 'Access Denied',
+            'links' => base_url('/' . ucfirst($roles)),
+        ];
+        $html = [
+            'body' => view('components/forbidden', $data),
+            'head' => view('extras/head', $data)
+        ];
+
+        return view('extras/body', $html);
     }
 
     private function links (){

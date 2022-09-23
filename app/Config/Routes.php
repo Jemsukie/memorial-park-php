@@ -22,7 +22,6 @@ $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
 $routes->setAutoRoute(true);
-
 /*
  * --------------------------------------------------------------------
  * Route Definitions
@@ -32,6 +31,26 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
+
+$routes->group('', ['filter' => 'UserLoggedIn'], function($routes){
+	//Add all routes that need protection by this filter
+	$routes->get('Auth/signup', 'Auth::signup');
+	$routes->get('Auth/login', 'Auth::login');
+});
+
+// $routes->match(['get'], '', 'Auth::login', ["filter" => "noauth"]);
+
+$routes->group('Admin', ['filter' => 'AuthCheck'], function($routes){
+	//Add all routes that need protection by this filter
+	$routes->get('', 'Admin::index');
+	$routes->get('(:any)', 'Admin::$1');
+});
+
+$routes->group('User', ['filter' => 'AuthCheck'], function($routes){
+	//Add all routes that need protection by this filter
+	$routes->get('', 'User::index');
+	$routes->get('(:any)', 'User::$1');
+});
 
 /*
  * --------------------------------------------------------------------

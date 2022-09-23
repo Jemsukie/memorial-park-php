@@ -10,7 +10,7 @@ use App\Models\AnnouncementModel;
 class Auth extends BaseController{
 
     public function __construct(){
-        helper(['url', 'form']);
+        helper(['url', 'form', 'array']);
     }
 
     private function links (){
@@ -190,17 +190,24 @@ class Auth extends BaseController{
             if($check_password !== 0){
                 return redirect()->to(base_url('/Auth/login'))->with('fail', 'Incorrect password!')->withInput();
             } else{
-                echo 'the';
+                session()->set([
+                    'id' => $user_info['id'],
+                    'email' => $user_info['email'],
+                    'roles' => $user_info['roles'],
+                    'isLoggedIn' => true,
+                ]);
+                return redirect()->to(base_url(ucfirst($user_info['roles'])))->with('success', 'Successfully Logged In!')->withInput();
+                
             }
-            
         }
     }
 
     public function logout(){
-        if(session()->has('loggedUser')){
-            session()->remove('loggedUser');
-            session()->remove('loggedMember');
+        if(session()->get('isLoggedIn')){
+            session()->remove(['id', 'email', 'roles', 'isLoggedIn']);
             return redirect()->to(base_url('/Auth/login?access=out'))->with('fail', 'You are logged out!');
+        } else{
+            return redirect()->to(base_url('/'));
         }
     }
 }

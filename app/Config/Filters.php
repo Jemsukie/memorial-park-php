@@ -6,6 +6,9 @@ use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
 use CodeIgniter\Filters\Honeypot;
+use App\Filters\AuthCheckFilter;
+use App\Filters\UserLoggedInFilter;
+// use App\Filters\AdminLoggedInFilter;
 
 class Filters extends BaseConfig
 {
@@ -16,10 +19,12 @@ class Filters extends BaseConfig
      * @var array
      */
     public $aliases = [
-        'csrf'     => CSRF::class,
-        'toolbar'  => DebugToolbar::class,
-        'honeypot' => Honeypot::class,
-    ];
+		'csrf'     => CSRF::class,
+		'toolbar'  => DebugToolbar::class,
+		'honeypot' => Honeypot::class,
+		'AuthCheck' => AuthCheckFilter::class,
+		'UserLoggedIn' => UserLoggedInFilter::class
+	];
 
     /**
      * List of filter aliases that are always

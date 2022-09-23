@@ -41,6 +41,10 @@ class Home extends BaseController
     }
     
     public function index(){
+        return $this->home();
+    }
+
+    public function home(){
         $data = [
             'title' => 'Home',
             'links' => $this->links(),
