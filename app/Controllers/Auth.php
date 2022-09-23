@@ -3,8 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
-use App\Models\DeceasedModel;
-use App\Models\AppointmentModel;
 use App\Models\AnnouncementModel;
 
 class Auth extends BaseController{
@@ -193,6 +191,7 @@ class Auth extends BaseController{
                 session()->set([
                     'id' => $user_info['id'],
                     'email' => $user_info['email'],
+                    'name' => $user_info['firstName'] . ' ' . $user_info['lastName'],
                     'roles' => $user_info['roles'],
                     'isLoggedIn' => true,
                 ]);

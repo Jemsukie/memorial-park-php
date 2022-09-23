@@ -86,7 +86,6 @@ class User extends BaseController
     }
 
     public function viewDeceased($id){
-        $session = \Config\Services::session();
         $deceasedModel = new DeceasedModel();
 
         $deceased_data = $deceasedModel->find($id);
@@ -116,7 +115,7 @@ class User extends BaseController
 
         $appointmentModel = new AppointmentModel();
 
-        $setFilter = 'status = "' . $status . '" AND userId = 5';
+        $setFilter = 'status = "' . $status . '" AND userId = ' . session()->get('id');
 
         $data = [
             'title' => 'Appointments',
@@ -153,7 +152,6 @@ class User extends BaseController
     }
 
     public function viewAppointment($id){
-        $session = \Config\Services::session();
         $appointmentModel = new AppointmentModel();
 
         $appointment_data = $appointmentModel->find($id);
@@ -192,7 +190,6 @@ class User extends BaseController
     }
 
     public function updateAppointment(){
-        $session = \Config\Services::session();
         $appointmentModel = new AppointmentModel();
         
         $input = [
@@ -205,7 +202,6 @@ class User extends BaseController
     }
 
     public function cancelAppointment($id){
-        $session = \Config\Services::session();
         $appointmentModel = new AppointmentModel();
 
         $appointment_data = $appointmentModel->find($id);
@@ -228,7 +224,7 @@ class User extends BaseController
             'links' => $this->links(),
             'scope' => 'User',
             'validation' => $formValidation,
-            'user_data' => $userModel->find(1)
+            'user_data' => $userModel->find(session()->get('id'))
         ];
         $html = [
             'body' => view('extras/navigation', $data)
@@ -241,7 +237,6 @@ class User extends BaseController
     }
 
     public function updateInfo(){
-        $session = \Config\Services::session();
         $userModel = new UserModel();
 
         $validation = $this->validate([
@@ -288,7 +283,6 @@ class User extends BaseController
     }
 
     public function updatePassword(){
-        $session = \Config\Services::session();
         $userModel = new UserModel();
 
         $validation = $this->validate([

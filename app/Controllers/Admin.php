@@ -175,7 +175,7 @@ class Admin extends BaseController
                 'latitude' => $this->request->getPost('latitude'),
                 'longitude' => $this->request->getPost('longitude'),
                 'createdAt' => date("Y-m-d h:i:s"),
-                'adminId' => 1
+                'adminId' => session()->get('id')
             ];
 
             $deceasedModel->insert($values);
@@ -268,7 +268,7 @@ class Admin extends BaseController
             $values = [
                 'message' => $this->request->getPost('message'),
                 'createdAt' => date("Y-m-d h:i:s"),
-                'adminId' => 1
+                'adminId' => session()->get('id')
             ];
 
             $announcementModel->insert($values);
@@ -410,7 +410,7 @@ class Admin extends BaseController
             'links' => $this->links(),
             'scope' => 'Admin',
             'validation' => $formValidation,
-            'user_data' => $userModel->find(1)
+            'user_data' => $userModel->find(session()->get('id'))
         ];
         $html = [
             'body' => view('extras/navigation', $data)
