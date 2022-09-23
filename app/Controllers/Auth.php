@@ -149,7 +149,7 @@ class Auth extends BaseController{
                 return redirect()->to(base_url('/Auth/signup'))->with('fail', 'Sorry, something went wrong...');
             }
             else{
-                return redirect()->to(base_url('/Auth/login'))->with('success', 'You are now registration request was successful!');
+                return redirect()->to(base_url('/Auth/login'))->with('success', 'You are now registered!');
             }
         }
     }
