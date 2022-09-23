@@ -35,7 +35,9 @@ class Home extends BaseController
         $announcementModel = new AnnouncementModel();
 
         $data['announcement_data'] = $announcementModel->findColumn('message');
-        shuffle($data['announcement_data']);
+        if($data['announcement_data']){
+            shuffle($data['announcement_data']);
+        }
 
         return view('extras/news', $data);
     }
