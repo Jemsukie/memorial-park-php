@@ -6,7 +6,7 @@
     <?php if(!$announcement_data): ?>
     <p>No records yet</p>
     <?php else: ?>
-    <table class="table table-dark table-striped">
+        <table class="responsive table table-dark table-striped">
         <thead class="thead-dark">
             <tr>
                 <th>ID</th>
@@ -17,8 +17,8 @@
         <tbody>
             <?php foreach($announcement_data as $data): ?>
             <tr>
-                <th scope="row"><?= $data['id'] ?></th>
-                <td scope="col">
+                <td scope="row" data-label="ID"><?= $data['id'] ?></td>
+                <td scope="col" data-label="Message">
                     <?php if(strlen($data['message']) > 50): ?>
                     <?php
                             $maxLength = 50;
@@ -29,7 +29,7 @@
                     <?= $data['message'] ?>
                     <?php endif ?>
                 </td>
-                <td scope="col">
+                <td scope="col" data-label="Actions">
                     <button type="button" class="btn btn-success" onClick="viewAnnouncements(<?= $data['id'] ?>)">Edit</button>
                     <button type="button" class="btn btn-danger" onClick="deleteAnnouncements(<?= $data['id'] ?>)">Delete</button>
                 </td>

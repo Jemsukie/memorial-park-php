@@ -42,7 +42,7 @@
     <?php if(!$deceased_data): ?>
     <p>No records yet</p>
     <?php else: ?>
-    <table class="table table-dark table-striped">
+        <table class="responsive table table-dark table-striped">
         <thead class="thead-dark">
             <tr>
                 <th>Name</th>
@@ -54,10 +54,10 @@
         <tbody>
             <?php foreach($deceased_data as $data): ?>
             <tr>
-                <th scope="row"><?= $data['firstName'] ?> <?= $data['lastName'] ?></th>
-                <td scope="col"><?= date('D M d\, Y', strtotime($data['dateBorn'])) ?></td>
-                <td scope="col"><?= date('D M d\, Y', strtotime($data['dateDied'])) ?></td>
-                <td scope="col">
+                <td scope="row" data-label="Name"><?= $data['firstName'] ?> <?= $data['lastName'] ?></td>
+                <td scope="col" data-label="Born"><?= date('D M d\, Y', strtotime($data['dateBorn'])) ?></td>
+                <td scope="col" data-label="Died"><?= date('D M d\, Y', strtotime($data['dateDied'])) ?></td>
+                <td scope="col" data-label="Actions">
                     <button type="button" class="btn btn-success"
                         onClick="viewDeceased(<?= $data['id'] ?>)">View</button>
                     <button type="button" class="btn btn-danger"

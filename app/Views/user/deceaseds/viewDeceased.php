@@ -23,11 +23,11 @@
                 </tr>
                 <tr>
                     <td scope="col">Born</td>
-                    <td scope="col"><?= date('D M d\, Y', strtotime($data['dateBorn'])) ?></td>
+                    <td scope="col"><?= date('D M d\, Y', strtotime($deceased_data['dateBorn'])) ?></td>
                 </tr>
                 <tr>
                     <td scope="col">Died</td>
-                    <td scope="col"><?= date('D M d\, Y', strtotime($data['dateDied'])) ?></td>
+                    <td scope="col"><?= date('D M d\, Y', strtotime($deceased_data['dateDied'])) ?></td>
                 </tr>
                 <tr>
                     <td scope="col">Latitude</td>

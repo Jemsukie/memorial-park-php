@@ -4,7 +4,7 @@
     <?php if(!$appointment_data): ?>
     <p>No records yet</p>
     <?php else: ?>
-    <table class="table table-dark table-striped">
+        <table class="responsive table table-dark table-striped">
         <thead class="thead-dark">
             <tr>
                 <th>User ID</th>
@@ -16,10 +16,10 @@
         <tbody>
             <?php foreach($appointment_data as $data): ?>
             <tr>
-                <th scope="row"><?= $data['userId'] ?></th>
-                <th scope="row"><?= $data['user'] ?></th>
-                <td scope="col"><?= date('M d\, Y h:i A', strtotime($data['schedule'])) ?></td>
-                <td scope="col">
+                <td scope="row" data-label="User ID"><?= $data['userId'] ?></td>
+                <th scope="row" data-label="Name"><?= $data['user'] ?></th>
+                <td scope="col" data-label="Schedule"><?= date('M d\, Y h:i A', strtotime($data['schedule'])) ?></td>
+                <td scope="col" data-label="Actions">
                     <button type="button" class="btn btn-danger"
                         onClick="cancelAppointment(<?= $data['id'] ?>)">Cancel</button>
                 </td>

@@ -3,7 +3,7 @@
     <?php if(!$user_data): ?>
     <p>No records yet</p>
     <?php else: ?>
-    <table class="table table-dark table-striped">
+        <table class="responsive table table-dark table-striped">
         <thead class="thead-dark">
             <tr>
                 <th>ID</th>
@@ -15,10 +15,10 @@
         <tbody>
             <?php foreach($user_data as $data): ?>
             <tr>
-                <th scope="row"><?= $data['id'] ?></th>
-                <td scope="col"><?= $data['email'] ?></td>
-                <td scope="col"><?= $data['firstName'] ?> <?= $data['lastName'] ?></td>
-                <td scope="col">
+                <td scope="row" data-label="ID"><?= $data['id'] ?></td>
+                <td scope="col" data-label="Email"><?= $data['email'] ?></td>
+                <td scope="col" data-label="Name"><?= $data['firstName'] ?> <?= $data['lastName'] ?></td>
+                <td scope="col" data-label="Actions">
                     <button type="button" class="btn btn-success" onClick="makeAdmin(<?= $data['id'] ?>)">Make
                         Admin</button>
                     <button type="button" class="btn btn-danger"

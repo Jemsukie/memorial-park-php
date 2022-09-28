@@ -19,10 +19,6 @@
                     <input type="text" class="form-control" id="input-lastName" aria-describedby="emailHelp"
                         placeholder="Edit last name" value="<?=  $user_data['lastName'] ?>" name="lastName" required>
                 </div>
-                <div class="form-group mt-2">
-                    <input type="hidden" class="form-control" id="input-id" name="id" value="<?= $user_data['id'] ?>"
-                        required>
-                </div>
                 <button type="submit" class="btn btn-primary w-100 mt-2">Update Info</button>
 
             </form>
@@ -43,10 +39,6 @@
                     <label for="input-confirmPassword">Confirm Password</label>
                     <input type="password" class="form-control" id="input-password" placeholder="Confirm Password"
                         name="confirmPassword" required>
-                </div>
-                <div class="form-group mt-2">
-                    <input type="hidden" class="form-control" id="input-id" name="id" value="<?= $user_data['id'] ?>"
-                        required>
                 </div>
                 <button type="submit" class="btn btn-primary w-100 mt-2">Change Password</button>
 
