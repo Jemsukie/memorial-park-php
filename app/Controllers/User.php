@@ -18,11 +18,11 @@ class User extends BaseController
 
     private function accessDeny($roles){
         $data = [
-            'title' => 'Access Denied',
+            'title' => '403 Access Denied',
             'links' => base_url('/' . ucfirst($roles)),
         ];
         $html = [
-            'body' => view('components/forbidden', $data),
+            'body' => view('errors/html/error_403', $data),
             'head' => view('extras/head', $data)
         ];
 
@@ -90,12 +90,74 @@ class User extends BaseController
 
         $deceased_data = $deceasedModel->find($id);
 
+        function graveCoords(){
+            $deceasedModel = new DeceasedModel();
+            $deceased_array = $deceasedModel->findAll();
+            $raws = [];
+
+            if(count($deceased_array) > 0)
+            {
+                foreach($deceased_array as $row){
+                    $lat = 157 - ($row['latitude'] - 157);
+                    $lon = $row['longitude'];
+                    $format = 'M' . $lon . ',' . $lat . 'L' . ($lon + 1) . ',' . $lat . ',' . ($lon + 1) . ',' . ($lat + 2) . ',' . $lon . ',' . ($lat + 2) . ',' . $lon . ',' . $lat;
+    
+                    array_push($raws, $format);
+                }
+            }
+            
+            return implode('', $raws);
+        }
+
+        function gravePoint($data){
+
+            $lat = 157 - ($data['latitude'] - 157);
+            $lon = $data['longitude'];
+            $path = 'M' . ($lon - 1) . ',' . ($lat + 1) . 'C' . ($lon - 1) . ',' . ($lat + 1) . ',' . ($lon - 1) . ',' . ($lat + 3) . ',' . ($lon + 1) . ',' . ($lat + 3) . ',' . ($lon + 2) . ',' . ($lat + 3) . ',' . ($lon + 2) . ',' . ($lat + 1) . ',' . ($lon + 2) . ',' . ($lat + 1) . ',' . ($lon + 2) . ',' . ($lat + 1) . ',' . ($lon + 2) . ',' . ($lat) . ',' . ($lon + 1) . ',' . ($lat) . ',' . ($lon - 1) . ',' . ($lat) . ',' . ($lon - 1) . ',' . ($lat + 1) . ',' . ($lon - 1) . ',' . ($lat + 1) . 'z';
+
+            $gravePoint = [
+                'name' => $data['firstName'] . ' ' . $data['lastName'],
+                'type' => 'map',
+                'joinBy' => 'id',
+                'mapData' => [
+                    [
+                        'id' => 'id4',
+                        'path' => $path,
+                    ],
+                ],
+                'data' => [
+                    [
+                        'id' => 'id4',
+                        'y' => 3,
+                    ],
+                ],
+                'shadow' => true,
+                'color' => '#23e9e79a',
+                'cursor' => 'pointer',
+                'tooltip' => [
+                    'pointFormat' => 'You might be looking for ' . $data['firstName'] . ' ' . $data['lastName'],
+                ],
+                'mapNavigation' => [
+                    'enabled' => true,
+                    'buttonOptions' => [
+                        'verticalAlign' => 'bottom',
+                    ],
+                ]
+            ];
+
+            return $gravePoint;
+        }
+
         if($deceased_data){
+            $mapData = [
+                'graves' => graveCoords(),
+                'point' => gravePoint($deceased_data)
+            ];
             $data = [
                 'title' => 'Deceaseds',
                 'links' => $this->links(),
                 'deceased_data' => $deceased_data,
-                'map' => view('highcharts/map')
+                'map' => view('highcharts/map', $mapData)
             ];
             $html = [
                 'body' => view('extras/navigation', $data)
@@ -182,7 +244,7 @@ class User extends BaseController
             'schedule' => $this->request->getPost('schedule'),
             'status' => 'request',
             'createdAt' => date("Y-m-d h:i:s"),
-            'userId' => $this->request->getPost('id')
+            'userId' => session()->get('id')
         ];
 
         $appointmentModel->insert($values);
@@ -275,8 +337,15 @@ class User extends BaseController
                 'firstName' => $this->request->getVar('firstName'),
                 'lastName' => $this->request->getVar('lastName'),
             ];
+            session()->set([
+                'id' => session()->get('id'),
+                'email' => $this->request->getVar('email'),
+                'name' => $this->request->getVar('firstName') . ' ' . $this->request->getVar('lastName'),
+                'roles' => session()->get('roles'),
+                'isLoggedIn' => true,
+            ]);
 
-            $userModel->update($this->request->getVar('id'), $input);
+            $userModel->update(session()->get('id'), $input);
             
             return redirect()->to(base_url('/User/settings'))->with('success', 'Account Updated!');
         }
@@ -321,15 +390,14 @@ class User extends BaseController
         }else{
 
             $oldPasswordInput = $this->request->getVar('oldPassword');
-            $id = $this->request->getVar('id');
-            $getAccount = $userModel->find($id);
+            $getAccount = $userModel->find(session()->get('id'));
 
             if($getAccount['password'] === $oldPasswordInput){
 
                 $input = [
                     'password' => $this->request->getVar('password')
                 ];
-                $userModel->update($this->request->getVar('id'), $input);
+                $userModel->update(session()->get('id'), $input);
                 
                 return redirect()->to(base_url('/User/settings'))->with('success', 'Password Updated!');
             } else{
