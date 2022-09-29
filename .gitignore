@@ -26,6 +26,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+*.txt
 
 # Linux
 *~
