@@ -143,7 +143,7 @@ class Admin extends BaseController
         }
     }
 
-    public function deceaseds(){
+    public function deceaseds($formValidation = []){
         $filter = [
             'firstName' => $this->request->getVar('firstName'),
             'lastName' => $this->request->getVar('lastName'),
@@ -166,6 +166,7 @@ class Admin extends BaseController
                     'icon' => 'user'
                 ]
             ],
+            'validation' => $formValidation,
             'createModalForm' => view('admin/deceaseds/createModalForm'),
             'filter' => $filter,
             'graves' => $this->graveCoords(),
@@ -186,19 +187,89 @@ class Admin extends BaseController
     public function createDeceased(){
         $deceasedModel = new DeceasedModel();
 
+        $validation = $this->validate([
+            'firstName' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The first name is required!',
+                ]
+            ],
+            'lastName' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The last name is required!',
+                ]
+            ],
+            'dateBorn' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The date of birth is required!',
+                ]
+            ],
+            'dateDied' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The date of death is required!',
+                ]
+            ],
+            'latitude' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The latitude is required!',
+                ]
+            ],
+            'longitude' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The longitude is required!',
+                ]
+            ],
+            'imageFile' => [
+                'rules' => 'is_image[imageFile]|max_size[imageFile,4096]',
+                'errors' => [
+                    'is_image[imageFile]' => 'The file you uploaded is not an image!',
+                    'max_size[imageFile,4096]' => 'The file you uploaded exceeds the maximum size!',
+                ]
+            ],
+        ]);
+
+        if(!$validation){
+            return $this->deceaseds([
+                $this->validator->showError('firstName'),
+                $this->validator->showError('lastName'),
+                $this->validator->showError('dateBorn'),
+                $this->validator->showError('dateDied'),
+                $this->validator->showError('latitude'),
+                $this->validator->showError('longitude'),
+                $this->validator->showError('imageFile'),
+            ]);
+            
+        }else{
+            $imageFile = $this->request->getFile('imageFile');
+            $firstName = $this->request->getVar('firstName');
+            $lastName = $this->request->getVar('lastName');
+            $newFileName = '';
+
+            if($imageFile->isValid() && !$imageFile->hasMoved()){
+                $newFileName = strtolower($firstName) . '_' . strtolower($lastName). '_' . time() . '.' . $imageFile->getExtension();
+                $imageFile->move('./assets/uploads', $newFileName); 
+             }
+
             $values = [
-                'firstName' => $this->request->getPost('firstName'),
-                'lastName' => $this->request->getPost('lastName'),
-                'dateBorn' => $this->request->getPost('dateBorn'),
-                'dateDied' => $this->request->getPost('dateDied'),
-                'latitude' => $this->request->getPost('latitude'),
-                'longitude' => $this->request->getPost('longitude'),
+                'firstName' => $firstName,
+                'lastName' => $lastName,
+                'dateBorn' => $this->request->getVar('dateBorn'),
+                'dateDied' => $this->request->getVar('dateDied'),
+                'latitude' => $this->request->getVar('latitude'),
+                'longitude' => $this->request->getVar('longitude'),
+                'imageFile' => $newFileName,
                 'createdAt' => date("Y-m-d h:i:s"),
                 'adminId' => session()->get('id')
             ];
-
+            
             $deceasedModel->insert($values);
             return redirect()->to(base_url('/Admin/deceaseds'))->with('success', 'Added Record Successfully!');
+        }
     }
 
     public function viewDeceased($id){

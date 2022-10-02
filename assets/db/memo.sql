@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 23, 2022 at 03:54 PM
+-- Generation Time: Oct 02, 2022 at 06:20 AM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.3.31
 
@@ -62,6 +62,7 @@ CREATE TABLE `deceased` (
   `dateDied` date NOT NULL,
   `latitude` float NOT NULL,
   `longitude` float NOT NULL,
+  `imageFile` varchar(50) NOT NULL,
   `createdAt` datetime NOT NULL,
   `adminId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -87,7 +88,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `email`, `password`, `firstName`, `lastName`, `roles`, `createdAt`) VALUES
-(1, 'admin@gmail.com', 'admins', 'Admin', 'User', 'admin', '2022-09-20 00:00:00');
+(1, 'admin@gmail.com', 'admins', 'Admin', 'Mode', 'admin', '2022-09-20 15:30:52');
 
 --
 -- Indexes for dumped tables
