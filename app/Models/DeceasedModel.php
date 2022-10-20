@@ -8,5 +8,5 @@ class DeceasedModel extends Model
 {
     protected $table = 'deceased';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['firstName', 'lastName', 'dateBorn', 'dateDied', 'latitude', 'longitude', 'imageFile', 'createdAt', 'adminId'];
+    protected $allowedFields = ['firstName', 'middleName', 'lastName', 'dateBorn', 'dateDied', 'latitude', 'longitude', 'imageFile', 'createdAt', 'adminId'];
 }

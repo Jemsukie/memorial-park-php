@@ -32,7 +32,7 @@ class User extends BaseController
     private function links (){
         return [
             [
-                'name' => 'Deceaseds',
+                'name' => 'Deceaseds Information',
                 'link' => 'User/'
             ],
             [
@@ -57,11 +57,13 @@ class User extends BaseController
     public function deceaseds(){
         $filter = [
             'firstName' => $this->request->getVar('firstName'),
+            'middleName' => $this->request->getVar('middleName'),
             'lastName' => $this->request->getVar('lastName'),
             'dateBorn' => $this->request->getVar('dateBorn'),
             'dateDied' => $this->request->getVar('dateDied'),
         ];
         $setFilter = 'firstName like "%'. $filter['firstName'] 
+        . '%" AND middleName like "%'. $filter['middleName']
         . '%" AND lastName like "%'. $filter['lastName']
         . '%" AND dateBorn like "%'. $filter['dateBorn']
         . '%" AND dateDied like "%'. $filter['dateDied'] . '%"';
@@ -135,7 +137,7 @@ class User extends BaseController
                 'color' => '#23e9e79a',
                 'cursor' => 'pointer',
                 'tooltip' => [
-                    'pointFormat' => 'You might be looking for ' . $data['firstName'] . ' ' . $data['lastName'],
+                    'pointFormat' => 'You might be looking for ' . $data['firstName'] . ' ' . mb_substr($data['middleName'], 0, 1) . '. ' . $data['lastName'],
                 ],
                 'mapNavigation' => [
                     'enabled' => true,
@@ -154,7 +156,7 @@ class User extends BaseController
                 'point' => gravePoint($deceased_data)
             ];
             $data = [
-                'title' => 'Deceaseds',
+                'title' => 'Deceaseds Information',
                 'links' => $this->links(),
                 'deceased_data' => $deceased_data,
                 'map' => view('highcharts/map', $mapData)
@@ -220,7 +222,7 @@ class User extends BaseController
 
         if($appointment_data){
             $data = [
-                'title' => 'Deceaseds',
+                'title' => 'Deceaseds Information',
                 'links' => $this->links(),
                 'appointment_data' => $appointment_data
             ];

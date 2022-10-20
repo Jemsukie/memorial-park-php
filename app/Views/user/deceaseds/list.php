@@ -5,28 +5,35 @@
         <form class="my-3" action="<?php echo base_url('/User')?>" method="post">
             <button type="submit" class="btn btn-primary mt-2">Filter</button>
             <div class="row">
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-4">
                     <div class="form-group mt-2">
                         <label for="input-firstName">First Name</label>
                         <input type="text" class="form-control" id="input-firstName" placeholder="First Name"
                             name="firstName" value="<?= $filter['firstName']?>">
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-4">
+                    <div class="form-group mt-2">
+                        <label for="input-middleName">Middle Name</label>
+                        <input type="text" class="form-control" id="input-middleName" placeholder="Middle Name"
+                            name="middleName" value="<?= $filter['middleName']?>">
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
                     <div class="form-group mt-2">
                         <label for="input-lastName">Last Name</label>
                         <input type="text" class="form-control" id="input-lastName" placeholder="Last Name"
                             name="lastName" value="<?= $filter['lastName']?>">
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-4">
                     <div class="form-group mt-2">
                         <label for="input-dateBorn">Date Born</label>
                         <input type="date" class="form-control" id="input-dateBorn" placeholder="Date Born"
                             name="dateBorn" value="<?= $filter['dateBorn']?>">
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-3">
+                <div class="col-md-6 col-lg-4">
                     <div class="form-group mt-2">
                         <label for="input-dateDied">Date Died</label>
                         <input type="date" class="form-control" id="input-email" placeholder="Date Died"
@@ -53,7 +60,7 @@
         <tbody>
             <?php foreach($deceased_data as $data): ?>
             <tr>
-                <td scope="row" data-label="Name"><?= $data['firstName'] ?> <?= $data['lastName'] ?></td>
+            <td scope="row" data-label="Name"><?= $data['firstName'] ?> <?= mb_substr($data['middleName'], 0, 1) ?>. <?= $data['lastName'] ?></td>
                 <td scope="col" data-label="Born"><?= date('D M d\, Y', strtotime($data['dateBorn'])) ?></td>
                 <td scope="col" data-label="Died"><?= date('D M d\, Y', strtotime($data['dateDied'])) ?></td>
                 <td scope="col" data-label="Actions">

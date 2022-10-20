@@ -37,7 +37,7 @@ class Admin extends BaseController
                 'link' => 'Admin/accounts'
             ],
             [
-                'name' => 'Deceaseds',
+                'name' => 'Deceaseds Information',
                 'link' => 'Admin/deceaseds'
             ],
             [
@@ -146,18 +146,20 @@ class Admin extends BaseController
     public function deceaseds($formValidation = []){
         $filter = [
             'firstName' => $this->request->getVar('firstName'),
+            'middleName' => $this->request->getVar('middleName'),
             'lastName' => $this->request->getVar('lastName'),
             'dateBorn' => $this->request->getVar('dateBorn'),
             'dateDied' => $this->request->getVar('dateDied'),
         ];
         $setFilter = 'firstName like "%'. $filter['firstName'] 
+        . '%" AND middleName like "%'. $filter['middleName']
         . '%" AND lastName like "%'. $filter['lastName']
         . '%" AND dateBorn like "%'. $filter['dateBorn']
         . '%" AND dateDied like "%'. $filter['dateDied'] . '%"';
 
         $deceasedModel = new DeceasedModel();
         $data = [
-            'title' => 'Deceaseds',
+            'title' => 'Deceaseds Information',
             'links' => $this->links(),
             'cards' => [
                 [
@@ -192,6 +194,12 @@ class Admin extends BaseController
                 'rules' => 'required',
                 'errors' => [
                     'required' => 'The first name is required!',
+                ]
+            ],
+            'middleName' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The middle name is required!',
                 ]
             ],
             'lastName' => [
@@ -236,6 +244,7 @@ class Admin extends BaseController
         if(!$validation){
             return $this->deceaseds([
                 $this->validator->showError('firstName'),
+                $this->validator->showError('middleName'),
                 $this->validator->showError('lastName'),
                 $this->validator->showError('dateBorn'),
                 $this->validator->showError('dateDied'),
@@ -247,6 +256,7 @@ class Admin extends BaseController
         }else{
             $imageFile = $this->request->getFile('imageFile');
             $firstName = $this->request->getVar('firstName');
+            $middleName = $this->request->getVar('middleName');
             $lastName = $this->request->getVar('lastName');
             $newFileName = '';
 
@@ -257,6 +267,7 @@ class Admin extends BaseController
 
             $values = [
                 'firstName' => $firstName,
+                'middleName' => $middleName,
                 'lastName' => $lastName,
                 'dateBorn' => $this->request->getVar('dateBorn'),
                 'dateDied' => $this->request->getVar('dateDied'),
@@ -303,7 +314,7 @@ class Admin extends BaseController
                 'color' => '#23e9e79a',
                 'cursor' => 'pointer',
                 'tooltip' => [
-                    'pointFormat' => 'You might be looking for ' . $data['firstName'] . ' ' . $data['lastName'],
+                    'pointFormat' => 'You might be looking for ' . $data['firstName'] . ' ' . mb_substr($data['middleName'], 0, 1) . '. ' . $data['lastName'],
                 ],
                 'mapNavigation' => [
                     'enabled' => true,
@@ -322,7 +333,7 @@ class Admin extends BaseController
                 'point' => gravePoint($deceased_data)
             ];
             $data = [
-                'title' => 'Deceaseds',
+                'title' => 'Deceaseds Information',
                 'links' => $this->links(),
                 'deceased_data' => $deceased_data,
                 'map' => view('highcharts/map', $mapData)
@@ -345,6 +356,7 @@ class Admin extends BaseController
 
         $input = [
             'firstName' => $this->request->getPost('firstName'),
+            'middleName' => $this->request->getPost('middleName'),
             'lastName' => $this->request->getPost('lastName'),
             'dateBorn' => $this->request->getPost('dateBorn'),
             'dateDied' => $this->request->getPost('dateDied'),

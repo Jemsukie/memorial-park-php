@@ -1,5 +1,5 @@
 <div class="container mt-2">
-    <h1>Edit ID: <?= $deceased_data['id'] ?></h1>
+    <h1>Update Deceased ID: <?= $deceased_data['id'] ?></h1>
 
 
     <div class="row px-5">
@@ -16,6 +16,12 @@
                     <label for="input-firstName">First Name</label>
                     <input type="text" class="form-control" id="input-firstName" placeholder="Enter First Name" name="firstName" value="<?= $deceased_data['firstName'] ?>" required>
                     <span class="text-danger"><?= isset($validation) ? display_error($validation, 'firstName') : '' ?></span>
+                </div>
+
+                <div class="form-group mt-2">
+                    <label for="input-middleName">Middle Name</label>
+                    <input type="text" class="form-control" id="input-middleName" placeholder="Enter Middle Name" name="middleName" value="<?= $deceased_data['middleName'] ?>" required>
+                    <span class="text-danger"><?= isset($validation) ? display_error($validation, 'middleName') : '' ?></span>
                 </div>
 
                 <div class="form-group mt-2">
