@@ -6,6 +6,11 @@
     </div>
 
     <div class="form-group mt-2">
+        <label for="input-middleName">Middle Name</label>
+        <input type="text" class="form-control" id="input-middleName" placeholder="Enter Middle Name" name="middleName" required>
+    </div>
+
+    <div class="form-group mt-2">
         <label for="input-lastName">Last Name</label>
         <input type="text" class="form-control" id="input-lastName" placeholder="Enter Last Name" name="lastName" required>
     </div>

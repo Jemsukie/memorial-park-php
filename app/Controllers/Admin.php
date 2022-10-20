@@ -9,7 +9,8 @@ use App\Models\AnnouncementModel;
 
 class Admin extends BaseController
 {
-    public function __construct(){
+    public function __construct()
+    {
         helper(['url', 'form', 'array']);
         if (session()->get('roles') !== "admin") {
             echo $this->accessDeny(session()->get('roles'));
@@ -17,7 +18,8 @@ class Admin extends BaseController
         }
     }
 
-    private function accessDeny($roles){
+    private function accessDeny($roles)
+    {
         $data = [
             'title' => '403 Access Denied',
             'links' => base_url('/' . ucfirst($roles)),
@@ -30,7 +32,8 @@ class Admin extends BaseController
         return view('extras/body', $html);
     }
 
-    private function links (){
+    private function links()
+    {
         return [
             [
                 'name' => 'Accounts',
@@ -59,14 +62,14 @@ class Admin extends BaseController
         ];
     }
 
-    private function graveCoords(){
+    private function graveCoords()
+    {
         $deceasedModel = new DeceasedModel();
         $deceased_array = $deceasedModel->findAll();
         $raws = [];
 
-        if(count($deceased_array) > 0)
-        {
-            foreach($deceased_array as $row){
+        if (count($deceased_array) > 0) {
+            foreach ($deceased_array as $row) {
                 $lat = 157 - ($row['latitude'] - 157);
                 $lon = $row['longitude'];
                 $format = 'M' . $lon . ',' . $lat . 'L' . ($lon + 1) . ',' . $lat . ',' . ($lon + 1) . ',' . ($lat + 2) . ',' . $lon . ',' . ($lat + 2) . ',' . $lon . ',' . $lat;
@@ -74,15 +77,17 @@ class Admin extends BaseController
                 array_push($raws, $format);
             }
         }
-        
+
         return implode('', $raws);
     }
 
-    public function index(){
+    public function index()
+    {
         return $this->accounts();
     }
-    
-    public function accounts($roles = 'admin'){
+
+    public function accounts($roles = 'admin')
+    {
         $userModel = new UserModel();
         $data = [
             'title' => 'Accounts',
@@ -107,8 +112,8 @@ class Admin extends BaseController
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('components/cards', $data)
-            . view('admin/accounts/' . $roles, $data),
+                . view('components/cards', $data)
+                . view('admin/accounts/' . $roles, $data),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -116,34 +121,38 @@ class Admin extends BaseController
         return view('extras/body', $html);
     }
 
-    public function makeAdmin($id){
+    public function makeAdmin($id)
+    {
         $userModel = new UserModel();
 
         $userModel->update($id, ['roles' => 'admin']);
-        
+
         return redirect()->to(base_url('/Admin'))->with('success', 'Admin User Created!');
     }
 
-    public function deleteUser($id){
+    public function deleteUser($id)
+    {
         $userModel = new UserModel();
 
-        function deleteAppointments($userId){
+        function deleteAppointments($userId)
+        {
             $appointmentModel = new AppointmentModel();
             $rows = $appointmentModel->where('userId = ' . $userId)->findAll();
 
-            foreach($rows as $row){
+            foreach ($rows as $row) {
                 $appointmentModel->where('id', $row['id'])->delete($row['id']);
             }
             return true;
         }
 
-        if(deleteAppointments($id)){
+        if (deleteAppointments($id)) {
             $userModel->where('id', $id)->delete($id);
             return redirect()->to(base_url('/Admin'))->with('success', 'Record Successfully Deleted!');
         }
     }
 
-    public function deceaseds($formValidation = []){
+    public function deceaseds($formValidation = [])
+    {
         $filter = [
             'firstName' => $this->request->getVar('firstName'),
             'middleName' => $this->request->getVar('middleName'),
@@ -151,11 +160,11 @@ class Admin extends BaseController
             'dateBorn' => $this->request->getVar('dateBorn'),
             'dateDied' => $this->request->getVar('dateDied'),
         ];
-        $setFilter = 'firstName like "%'. $filter['firstName'] 
-        . '%" AND middleName like "%'. $filter['middleName']
-        . '%" AND lastName like "%'. $filter['lastName']
-        . '%" AND dateBorn like "%'. $filter['dateBorn']
-        . '%" AND dateDied like "%'. $filter['dateDied'] . '%"';
+        $setFilter = 'firstName like "%' . $filter['firstName']
+            . '%" AND middleName like "%' . $filter['middleName']
+            . '%" AND lastName like "%' . $filter['lastName']
+            . '%" AND dateBorn like "%' . $filter['dateBorn']
+            . '%" AND dateDied like "%' . $filter['dateDied'] . '%"';
 
         $deceasedModel = new DeceasedModel();
         $data = [
@@ -177,8 +186,8 @@ class Admin extends BaseController
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('highcharts/map', $data )
-            . view('admin/deceaseds/list', $data),
+                . view('highcharts/map', $data)
+                . view('admin/deceaseds/list', $data),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -186,7 +195,8 @@ class Admin extends BaseController
         return view('extras/body', $html);
     }
 
-    public function createDeceased(){
+    public function createDeceased()
+    {
         $deceasedModel = new DeceasedModel();
 
         $validation = $this->validate([
@@ -241,7 +251,7 @@ class Admin extends BaseController
             ],
         ]);
 
-        if(!$validation){
+        if (!$validation) {
             return $this->deceaseds([
                 $this->validator->showError('firstName'),
                 $this->validator->showError('middleName'),
@@ -252,18 +262,17 @@ class Admin extends BaseController
                 $this->validator->showError('longitude'),
                 $this->validator->showError('imageFile'),
             ]);
-            
-        }else{
+        } else {
             $imageFile = $this->request->getFile('imageFile');
             $firstName = $this->request->getVar('firstName');
             $middleName = $this->request->getVar('middleName');
             $lastName = $this->request->getVar('lastName');
-            $newFileName = '';
+            $newFileName = '[]';
 
-            if($imageFile->isValid() && !$imageFile->hasMoved()){
-                $newFileName = strtolower($firstName) . '_' . strtolower($lastName). '_' . time() . '.' . $imageFile->getExtension();
-                $imageFile->move('./assets/uploads', $newFileName); 
-             }
+            if ($imageFile->isValid() && !$imageFile->hasMoved()) {
+                $newFileName = strtolower($firstName) . '_' . strtolower($lastName) . '_' . time() . '.' . $imageFile->getExtension();
+                $imageFile->move('./assets/uploads', $newFileName);
+            }
 
             $values = [
                 'firstName' => $firstName,
@@ -273,22 +282,24 @@ class Admin extends BaseController
                 'dateDied' => $this->request->getVar('dateDied'),
                 'latitude' => $this->request->getVar('latitude'),
                 'longitude' => $this->request->getVar('longitude'),
-                'imageFile' => $newFileName,
+                'imageFile' => '["' . $newFileName . '"]',
                 'createdAt' => date("Y-m-d h:i:s"),
                 'adminId' => session()->get('id')
             ];
-            
+
             $deceasedModel->insert($values);
             return redirect()->to(base_url('/Admin/deceaseds'))->with('success', 'Added Record Successfully!');
         }
     }
 
-    public function viewDeceased($id){
+    public function viewDeceased($id)
+    {
         $deceasedModel = new DeceasedModel();
 
         $deceased_data = $deceasedModel->find($id);
 
-        function gravePoint($data){
+        function gravePoint($data)
+        {
 
             $lat = 157 - ($data['latitude'] - 157);
             $lon = $data['longitude'];
@@ -327,7 +338,7 @@ class Admin extends BaseController
             return $gravePoint;
         }
 
-        if($deceased_data){
+        if ($deceased_data) {
             $mapData = [
                 'graves' => $this->graveCoords(),
                 'point' => gravePoint($deceased_data)
@@ -340,52 +351,151 @@ class Admin extends BaseController
             ];
             $html = [
                 'body' => view('extras/navigation', $data)
-                . view('admin/deceaseds/viewDeceased', $data),
+                    . view('admin/deceaseds/viewDeceased', $data),
                 'head' => view('extras/head', $data),
                 'sidebar' => view('extras/sidebar', $data)
             ];
-    
+
             return view('extras/body', $html);
-        } else{
+        } else {
             return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
         }
     }
 
-    public function updateDeceased(){
+    public function updateDeceased()
+    {
         $deceasedModel = new DeceasedModel();
 
-        $input = [
-            'firstName' => $this->request->getPost('firstName'),
-            'middleName' => $this->request->getPost('middleName'),
-            'lastName' => $this->request->getPost('lastName'),
-            'dateBorn' => $this->request->getPost('dateBorn'),
-            'dateDied' => $this->request->getPost('dateDied'),
-            'latitude' => $this->request->getPost('latitude'),
-            'longitude' => $this->request->getPost('longitude')
-        ];
+        $validation = $this->validate([
+            'firstName' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The first name is required!',
+                ]
+            ],
+            'middleName' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The middle name is required!',
+                ]
+            ],
+            'lastName' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The last name is required!',
+                ]
+            ],
+            'dateBorn' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The date of birth is required!',
+                ]
+            ],
+            'dateDied' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The date of death is required!',
+                ]
+            ],
+            'latitude' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The latitude is required!',
+                ]
+            ],
+            'longitude' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'The longitude is required!',
+                ]
+            ],
+            'imageFile' => [
+                'rules' => 'is_image[imageFile]|max_size[imageFile,4096]',
+                'errors' => [
+                    'is_image[imageFile]' => 'The file you uploaded is not an image!',
+                    'max_size[imageFile,4096]' => 'The file you uploaded exceeds the maximum size!',
+                ]
+            ],
+        ]);
+        if (!$validation) {
+            return $this->deceaseds([
+                $this->validator->showError('firstName'),
+                $this->validator->showError('middleName'),
+                $this->validator->showError('lastName'),
+                $this->validator->showError('dateBorn'),
+                $this->validator->showError('dateDied'),
+                $this->validator->showError('latitude'),
+                $this->validator->showError('longitude'),
+                $this->validator->showError('imageFile'),
+            ]);
+        } else {
 
-        $deceasedModel->update($this->request->getPost('id'), $input);
+            $id = $this->request->getPost('id');
+            $getImageFromDB = $deceasedModel->find($id);
+            $imgArray = json_decode($getImageFromDB['imageFile']);
 
-        return redirect()->to(base_url('/Admin/deceaseds'))->with('success', 'Record Updated!');
+            $imageFile = $this->request->getFile('imageFile');
+            $firstName = $this->request->getVar('firstName');
+            $middleName = $this->request->getVar('middleName');
+            $lastName = $this->request->getVar('lastName');
+            $newFileName = '';
+
+            if ($imageFile->isValid() && !$imageFile->hasMoved()) {
+                $newFileName = strtolower($firstName) . '_' . strtolower($lastName) . '_' . time() . '.' . $imageFile->getExtension();
+                $imageFile->move('./assets/uploads', $newFileName);
+                array_push($imgArray, $newFileName);
+            }
+
+            $input = [
+                'firstName' => $firstName,
+                'middleName' => $middleName,
+                'lastName' => $lastName,
+                'dateBorn' => $this->request->getPost('dateBorn'),
+                'dateDied' => $this->request->getPost('dateDied'),
+                'latitude' => $this->request->getPost('latitude'),
+                'longitude' => $this->request->getPost('longitude'),
+                'imageFile' => json_encode($imgArray),
+            ];
+
+            $deceasedModel->update($id, $input);
+
+            return redirect()->to(base_url('/Admin/deceaseds'))->with('success', 'Record Updated!');
+        }
     }
 
-    public function deleteDeceased($id){
+    public function deleteImage($id, $key)
+    {
+        $deceasedModel = new DeceasedModel();
+        $getImageFromDB = $deceasedModel->find($id);
+        $imgArray = json_decode($getImageFromDB['imageFile']);
+
+        array_splice($imgArray, $key, $key + 1);
+
+        $input = [
+            'imageFile' => json_encode($imgArray),
+        ];
+
+        $deceasedModel->update($id, $input);
+        return redirect()->to(base_url('/Admin/viewDeceased/' . $id))->with('success', 'Image Deleted!');
+    }
+
+    public function deleteDeceased($id)
+    {
         $deceasedModel = new DeceasedModel();
 
         $deceased_info = $deceasedModel->find($id);
 
-        if($deceased_info){
+        if ($deceased_info) {
             $deceasedModel->where('id', $id)->delete($id);
 
             return redirect()->to(base_url('/Admin/deceaseds'))->with('success', 'Record Successfully Deleted!');
-        } else{
+        } else {
             return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
         }
-
-        
     }
 
-    public function announcements(){
+    public function announcements()
+    {
 
         $announcementModel = new AnnouncementModel();
 
@@ -399,7 +509,7 @@ class Admin extends BaseController
 
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('admin/announcements/list', $data),
+                . view('admin/announcements/list', $data),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -407,25 +517,27 @@ class Admin extends BaseController
         return view('extras/body', $html);
     }
 
-    public function createAnnouncements(){
+    public function createAnnouncements()
+    {
         $announcementModel = new AnnouncementModel();
 
-            $values = [
-                'message' => $this->request->getPost('message'),
-                'createdAt' => date("Y-m-d h:i:s"),
-                'adminId' => session()->get('id')
-            ];
+        $values = [
+            'message' => $this->request->getPost('message'),
+            'createdAt' => date("Y-m-d h:i:s"),
+            'adminId' => session()->get('id')
+        ];
 
-            $announcementModel->insert($values);
-            return redirect()->to(base_url('/Admin/announcements'))->with('success', 'Added Record Successfully!');
+        $announcementModel->insert($values);
+        return redirect()->to(base_url('/Admin/announcements'))->with('success', 'Added Record Successfully!');
     }
 
-    public function viewAnnouncements($id){
+    public function viewAnnouncements($id)
+    {
         $announcementModel = new AnnouncementModel();
 
         $announcement_info = $announcementModel->find($id);
 
-        if($announcement_info){
+        if ($announcement_info) {
             $data = [
                 'title' => 'Announcements',
                 'links' => $this->links(),
@@ -433,19 +545,19 @@ class Admin extends BaseController
             ];
             $html = [
                 'body' => view('extras/navigation', $data)
-                . view('admin/announcements/viewMessage', $data),
+                    . view('admin/announcements/viewMessage', $data),
                 'head' => view('extras/head', $data),
                 'sidebar' => view('extras/sidebar', $data)
             ];
-    
+
             return view('extras/body', $html);
-        } else{
+        } else {
             return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
         }
-
     }
 
-    public function updateAnnouncements(){
+    public function updateAnnouncements()
+    {
         $announcementModel = new AnnouncementModel();
 
         $input = ['message' => $this->request->getPost('message')];
@@ -455,29 +567,32 @@ class Admin extends BaseController
         return redirect()->to(base_url('/Admin/announcements'))->with('success', 'Record Updated!');
     }
 
-    public function deleteAnnouncements($id){
+    public function deleteAnnouncements($id)
+    {
         $announcementModel = new AnnouncementModel();
 
         $announcement_info = $announcementModel->find($id);
 
-        if($announcement_info){
+        if ($announcement_info) {
             $announcementModel->where('id', $id)->delete($id);
-            
+
             return redirect()->to(base_url('/Admin/announcements'))->with('success', 'Record Successfully Deleted!');
-        } else{
+        } else {
             return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
         }
     }
 
-    public function appointments($status = 'request'){
+    public function appointments($status = 'request')
+    {
 
         $appointmentModel = new AppointmentModel();
 
-        function getName($rows){
+        function getName($rows)
+        {
             $userModel = new UserModel();
             $raws = [];
-            
-            foreach($rows as $row){
+
+            foreach ($rows as $row) {
                 $userInfo = $userModel->find($row['userId']);
                 array_push($raws, $row + [
                     'user' => $userInfo['firstName'] . ' ' . $userInfo['lastName'],
@@ -509,8 +624,8 @@ class Admin extends BaseController
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('components/cards', $data )
-            . view('admin/appointments/' . $status, $data),
+                . view('components/cards', $data)
+                . view('admin/appointments/' . $status, $data),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -518,35 +633,38 @@ class Admin extends BaseController
         return view('extras/body', $html);
     }
 
-    public function approveAppointment($id){
+    public function approveAppointment($id)
+    {
         $appointmentModel = new AppointmentModel();
 
         $appointment_info = $appointmentModel->find($id);
 
-        if($appointment_info){
+        if ($appointment_info) {
             $appointmentModel->update($id, ['status' => 'approved']);
-            
+
             return redirect()->to(base_url('/Admin/appointments'))->with('success', 'Appointment Schedule Approved!');
-        } else{
+        } else {
             return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
         }
     }
 
-    public function cancelAppointment($id){
+    public function cancelAppointment($id)
+    {
         $appointmentModel = new AppointmentModel();
 
         $appointment_info = $appointmentModel->find($id);
 
-        if($appointment_info){
+        if ($appointment_info) {
             $appointmentModel->where('id', $id)->delete($id);
-            
+
             return redirect()->to(base_url('/Admin/appointments'))->with('success', 'Appointment Cancelled!');
-        } else{
+        } else {
             return redirect()->to(base_url('/Auth/login'))->with('fail', 'No Record Found!');
         }
     }
 
-    public function settings($formValidation = []){
+    public function settings($formValidation = [])
+    {
 
         $userModel = new UserModel();
 
@@ -559,7 +677,7 @@ class Admin extends BaseController
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('components/settings', $data),
+                . view('components/settings', $data),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -567,7 +685,8 @@ class Admin extends BaseController
         return view('extras/body', $html);
     }
 
-    public function updateInfo(){
+    public function updateInfo()
+    {
         $userModel = new UserModel();
 
         $validation = $this->validate([
@@ -577,29 +696,29 @@ class Admin extends BaseController
                     'required' => 'Your email is required!',
                     'valid_email' => 'Invalid email!'
                 ]
-            ],//This error messages back if the id is required or id already taken.
+            ], //This error messages back if the id is required or id already taken.
             'firstName' => [
                 'rules' => 'required',
                 'errors' => [
                     'required' => 'Your first name is required!',
                 ]
-            ],//Name required
+            ], //Name required
             'lastName' => [
                 'rules' => 'required',
                 'errors' => [
                     'required' => 'Your last name is required!',
                 ]
-            ],//Name required
+            ], //Name required
         ]);
 
-        if(!$validation){
+        if (!$validation) {
             //If the validation is wrong, then this will flash errors on settings.php
             return $this->settings([
                 $this->validator->showError('email'),
                 $this->validator->showError('firstName'),
                 $this->validator->showError('lastName')
             ]);
-        }else{
+        } else {
 
             $input = [
                 'email' => $this->request->getVar('email'),
@@ -619,7 +738,8 @@ class Admin extends BaseController
         }
     }
 
-    public function updatePassword(){
+    public function updatePassword()
+    {
         $userModel = new UserModel();
 
         $validation = $this->validate([
@@ -636,7 +756,7 @@ class Admin extends BaseController
                     'min_length' => 'Password must have atleast 5 characters in length!',
                     'max_length' => 'Password must not have more than 25 characters in length!'
                 ]
-            ],//Password required, must have minimum length of 5
+            ], //Password required, must have minimum length of 5
             'confirmPassword' => [
                 'rules' => 'required|min_length[5]|max_length[25]|matches[password]',
                 'errors' => [
@@ -645,22 +765,22 @@ class Admin extends BaseController
                     'max_length' => 'Password must not have more than 25 characters in length!',
                     'matches' => 'Password do not match!'
                 ]
-            ]//Confirm password required, must have minimum length of 5 and must match with password
+            ] //Confirm password required, must have minimum length of 5 and must match with password
         ]);
 
-        if(!$validation){
+        if (!$validation) {
             //If the validation is wrong, then this will flash errors on settings.php
             return $this->settings([
                 $this->validator->showError('oldPassword'),
                 $this->validator->showError('password'),
                 $this->validator->showError('confirmPassword')
             ]);
-        }else{
+        } else {
 
             $oldPasswordInput = $this->request->getVar('oldPassword');
             $getAccount = $userModel->find(session()->get('id'));
 
-            if($getAccount['password'] === $oldPasswordInput){
+            if ($getAccount['password'] === $oldPasswordInput) {
 
                 $input = [
                     'password' => $this->request->getVar('password')
@@ -668,12 +788,9 @@ class Admin extends BaseController
                 $userModel->update(session()->get('id'), $input);
 
                 return redirect()->to(base_url('/Admin/settings'))->with('success', 'Password Updated!');
-            } else{
+            } else {
                 return redirect()->to(base_url('/Admin/settings'))->with('fail', 'Wrong Password!');
             }
         }
-        
     }
 }
-
-?>

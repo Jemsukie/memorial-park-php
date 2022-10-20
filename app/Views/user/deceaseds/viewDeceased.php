@@ -6,7 +6,30 @@
         <div class="row px-5">
             <div class="col-md-6 px-5">
                 <h3 class="text-center">Image</h3>
-                <img class="img-fluid img-thumbnail" src="<?= base_url('/assets/uploads/' . $deceased_data['imageFile']) ?>" class="rounded" alt="No image">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <?php
+                            $imgArray = json_decode($deceased_data['imageFile']);
+                        ?>
+                        <?php if(count($imgArray) > 0): ?>
+                        <?php foreach ($imgArray as $key => $img) : ?>
+                            <div class="carousel-item <?= $key === 0 ? 'active' : '' ?>">
+                                <img class="img-fluid img-thumbnail" src="<?= base_url('/assets/uploads/' . $img) ?>" class="rounded" alt="No image">
+                            </div>
+                        <?php endforeach ?>
+                        <?php else: ?>
+                            <img class="img-fluid img-thumbnail" class="rounded" alt="No image">
+                        <?php endif ?>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
             </div>
             <div class="col-md-6 px-5">
                 <a type="button" href="<?= base_url('User/deceaseds') ?>" class="btn btn-danger">Back</a>

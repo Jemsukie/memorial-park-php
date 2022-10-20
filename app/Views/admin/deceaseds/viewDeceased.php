@@ -6,11 +6,35 @@
         <div class="col-md-6 px-5">
             <div class="text-center">
                 <h3>Image</h3>
-                <img class="img-fluid img-thumbnail" src="<?= base_url('/assets/uploads/' . $deceased_data['imageFile'])?>" class="rounded" alt="No image">
+                <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        <?php
+                            $imgArray = json_decode($deceased_data['imageFile']);
+                        ?>
+                        <?php if(count($imgArray) > 0): ?>
+                        <?php foreach ($imgArray as $key => $img) : ?>
+                            <div class="carousel-item <?= $key === 0 ? 'active' : '' ?>">
+                                <img class="img-fluid img-thumbnail" src="<?= base_url('/assets/uploads/' . $img) ?>" class="rounded" alt="No image">
+                                <button class="mx-1 btn btn-danger w-50 mt-2" onclick="deleteImage(<?= $deceased_data['id'] ?>, <?= $key ?>)">Delete</button>
+                            </div>
+                        <?php endforeach ?>
+                        <?php else: ?>
+                            <img class="img-fluid img-thumbnail" class="rounded" alt="No image">
+                        <?php endif ?>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="col-md-6 px-5"><?php include('mapModal.php') ?>
-            <form class="mt-3 mb-5" action="<?= base_url('Admin/updateDeceased') ?>" method="post">
+            <form class="mt-3 mb-5" action="<?= base_url('Admin/updateDeceased') ?>" method="post" enctype="multipart/form-data">
 
                 <div class="form-group mt-2">
                     <label for="input-firstName">First Name</label>
@@ -54,6 +78,13 @@
                     <span class="text-danger"><?= isset($validation) ? display_error($validation, 'longitude') : '' ?></span>
                 </div>
 
+                <?php if (count($imgArray) < 3) : ?>
+                    <div class="form-group mt-2">
+                        <label for="input-imageFile">Add Image</label>
+                        <input type="file" class="form-control" id="input-imageFile" placeholder="Enter Image" name="imageFile">
+                    </div>
+                <?php endif ?>
+
                 <div class="form-group mt-2">
                     <input type="hidden" class="form-control" id="input-id" name="id" value="<?= $deceased_data['id'] ?>" required>
                 </div>
@@ -66,5 +97,14 @@
         </div>
     </div>
 
-
 </div>
+
+<script>
+    function deleteImage(id, key) {
+        const confirm = window.confirm('Are you sure to delete this image?')
+        if (confirm) {
+            window.location.href = "<?= base_url('Admin/deleteImage') ?>" + `/${id}/${key}`
+        }
+        return false
+    }
+</script>
