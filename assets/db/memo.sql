@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 02, 2022 at 06:20 AM
+-- Generation Time: Oct 20, 2022 at 06:19 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 7.3.31
 
@@ -57,17 +57,16 @@ CREATE TABLE `appointment` (
 CREATE TABLE `deceased` (
   `id` int(11) NOT NULL,
   `firstName` varchar(50) NOT NULL,
+  `middleName` varchar(50) NOT NULL,
   `lastName` varchar(50) NOT NULL,
   `dateBorn` date NOT NULL,
   `dateDied` date NOT NULL,
   `latitude` float NOT NULL,
   `longitude` float NOT NULL,
-  `imageFile` varchar(50) NOT NULL,
+  `imageFile` varchar(150) NOT NULL,
   `createdAt` datetime NOT NULL,
   `adminId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `user`
