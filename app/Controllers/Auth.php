@@ -52,7 +52,8 @@ class Auth extends BaseController{
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('Auth/login'),
+            . view('Auth/login')
+            .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -70,7 +71,8 @@ class Auth extends BaseController{
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('Auth/signup'),
+            . view('Auth/signup')
+            .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];

@@ -1,0 +1,102 @@
+.container-form{
+    max-width: 300px;
+    flex-direction: column;
+}
+
+#wrapper {
+    overflow-x: hidden;
+}
+
+input[type="text"]{
+    text-transform: capitalize;
+}
+
+#sidebar-wrapper {
+    min-height: 100vh;
+    margin-left: -15rem;
+    transition: margin 0.25s ease-out;
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding: 0.875rem 1.25rem;
+    font-size: 1.2rem;
+}
+
+#sidebar-wrapper .list-group {
+    width: 15rem;
+}
+
+#page-content-wrapper {
+    min-width: 100vw;
+}
+
+body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
+    margin-left: 0;
+}
+
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0;
+    }
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+    body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
+        margin-left: -15rem;
+    }
+}
+
+.errors ul {
+    list-style-type: none;
+}
+
+.pagination {
+    display: inline-block;
+}
+
+.pagination li a {
+    margin: 1px;
+    border-radius: 10%;
+    color: blue;
+    float: left;
+    padding: 8px 16px;
+    border: transparent solid 1px;
+    text-decoration: none;
+}
+
+.pagination li a:hover {
+    background-color: transparent;
+    border: black solid 1px;
+}
+
+@media(max-width: 768px){
+    .responsive.responsive.table thead{
+        display: none;
+    }
+    
+    .responsive.responsive.table, .responsive.table tbody, .responsive.table tr, .responsive.table td{
+        display: block;
+        width: 100%;
+    }
+
+    .responsive.table tr{
+        margin-bottom: 10px;
+    }
+    
+    .responsive.table td{
+        text-align: right;
+        position: relative;
+    }
+    
+    .responsive.table td::before{
+        font-weight: bold;
+        padding: 5px;
+        content: attr(data-label);
+        position: absolute;
+        left: 0;
+        width: 50%;
+        text-align: left;
+    }
+}
+

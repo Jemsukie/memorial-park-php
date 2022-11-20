@@ -10,6 +10,7 @@
                 <th>User ID</th>
                 <th>Name</th>
                 <th>Schedule</th>
+                <th>Type</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -19,6 +20,7 @@
                 <td scope="row" data-label="User ID"><?= $data['userId'] ?></td>
                 <th scope="row" data-label="Name"><?= $data['user'] ?></th>
                 <td scope="col" data-label="Schedule"><?= date('M d\, Y h:i A', strtotime($data['schedule'])) ?></td>
+                <td scope="col" data-label="Type"><?= $data['type'] ?></td>
                 <td scope="col" data-label="Actions">
                     <button type="button" class="btn btn-danger"
                         onClick="cancelAppointment(<?= $data['id'] ?>)">Cancel</button>

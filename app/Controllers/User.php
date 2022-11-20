@@ -56,11 +56,12 @@ class User extends BaseController
     
     public function deceaseds(){
         $filter = [
-            'firstName' => $this->request->getVar('firstName'),
-            'middleName' => $this->request->getVar('middleName'),
-            'lastName' => $this->request->getVar('lastName'),
-            'dateBorn' => $this->request->getVar('dateBorn'),
-            'dateDied' => $this->request->getVar('dateDied'),
+            'firstName' => $this->request->getVar('firstName') ? $this->request->getVar('firstName') : '',
+            'middleName' => $this->request->getVar('middleName') ? $this->request->getVar('middleName') : '',
+            'lastName' => $this->request->getVar('lastName') ? $this->request->getVar('lastName') : '',
+            'dateBorn' => $this->request->getVar('dateBorn') ? $this->request->getVar('dateBorn') : '',
+            'dateDied' => $this->request->getVar('dateDied') ? $this->request->getVar('dateDied') : '',
+            'sortBy' => $this->request->getVar('sortBy') ? $this->request->getVar('sortBy') : 'DESC'
         ];
         $setFilter = 'firstName like "%'. $filter['firstName'] 
         . '%" AND middleName like "%'. $filter['middleName']
@@ -74,12 +75,17 @@ class User extends BaseController
             'title' => 'Main',
             'links' => $this->links(),
             'filter' => $filter,
-            'deceased_data' => $deceasedModel->where($setFilter)->orderBy('createdAt', 'DESC')->paginate(10),
+            'filterSelect' => view('components/filter', [
+                'addr' => 'User',
+                'filter' => $filter,
+            ]),
+            'deceased_data' => $deceasedModel->where($setFilter)->orderBy('createdAt', $filter['sortBy'])->paginate(10),
             'pagination_link' => $deceasedModel->pager
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('user/deceaseds/list', $data),
+            . view('user/deceaseds/list', $data)
+            .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -133,7 +139,6 @@ class User extends BaseController
                         'y' => 3,
                     ],
                 ],
-                'shadow' => true,
                 'color' => '#23e9e79a',
                 'cursor' => 'pointer',
                 'tooltip' => [
@@ -163,7 +168,8 @@ class User extends BaseController
             ];
             $html = [
                 'body' => view('extras/navigation', $data)
-                . view('user/deceaseds/viewDeceased', $data),
+                . view('user/deceaseds/viewDeceased', $data)
+                .view('extras/footer'),
                 'head' => view('extras/head', $data),
                 'sidebar' => view('extras/sidebar', $data)
             ];
@@ -207,7 +213,8 @@ class User extends BaseController
         $html = [
             'body' => view('extras/navigation', $data)
             . view('components/cards', $data)
-            . view('user/appointments/'. $status, $data),
+            . view('user/appointments/'. $status, $data)
+            .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -228,7 +235,8 @@ class User extends BaseController
             ];
             $html = [
                 'body' => view('extras/navigation', $data)
-                . view('user/appointments/viewAppointment', $data),
+                . view('user/appointments/viewAppointment', $data)
+                .view('extras/footer'),
                 'head' => view('extras/head', $data),
                 'sidebar' => view('extras/sidebar', $data)
             ];
@@ -244,6 +252,7 @@ class User extends BaseController
 
         $values = [
             'schedule' => $this->request->getPost('schedule'),
+            'type' => $this->request->getPost('appType'),
             'status' => 'request',
             'createdAt' => date("Y-m-d h:i:s"),
             'userId' => session()->get('id')
@@ -292,7 +301,8 @@ class User extends BaseController
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('components/settings', $data),
+            . view('components/settings', $data)
+            .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];

@@ -8,6 +8,7 @@
         <thead class="thead-dark">
             <tr>
                 <th>Schedule</th>
+                <th>Type</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -15,6 +16,7 @@
             <?php foreach($appointment_data as $data): ?>
             <tr>
                 <td scope="col" data-label="Schedule"><?= date('M d\, Y h:i A', strtotime($data['schedule'])) ?></td>
+                <td scope="col" data-label="Type"><?= $data['type'] ?></td>
                 <td scope="col" data-label="Actions">
                     <button type="button" class="btn btn-success" onClick="viewAppointment(<?= $data['id'] ?>)">View</button>
                     <button type="button" class="btn btn-danger" onClick="cancelAppointment(<?= $data['id'] ?>)">Cancel</button>

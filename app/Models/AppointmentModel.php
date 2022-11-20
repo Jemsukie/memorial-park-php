@@ -8,5 +8,5 @@ class AppointmentModel extends Model
 {
     protected $table = 'appointment';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['schedule', 'status', 'createdAt', 'userId'];
+    protected $allowedFields = ['schedule', 'status', 'type', 'createdAt', 'userId'];
 }

@@ -113,7 +113,8 @@ class Admin extends BaseController
         $html = [
             'body' => view('extras/navigation', $data)
                 . view('components/cards', $data)
-                . view('admin/accounts/' . $roles, $data),
+                . view('admin/accounts/' . $roles, $data)
+                .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -154,11 +155,12 @@ class Admin extends BaseController
     public function deceaseds($formValidation = [])
     {
         $filter = [
-            'firstName' => $this->request->getVar('firstName'),
-            'middleName' => $this->request->getVar('middleName'),
-            'lastName' => $this->request->getVar('lastName'),
-            'dateBorn' => $this->request->getVar('dateBorn'),
-            'dateDied' => $this->request->getVar('dateDied'),
+            'firstName' => $this->request->getVar('firstName') ? $this->request->getVar('firstName') : '',
+            'middleName' => $this->request->getVar('middleName') ? $this->request->getVar('middleName') : '',
+            'lastName' => $this->request->getVar('lastName') ? $this->request->getVar('lastName') : '',
+            'dateBorn' => $this->request->getVar('dateBorn') ? $this->request->getVar('dateBorn') : '',
+            'dateDied' => $this->request->getVar('dateDied') ? $this->request->getVar('dateDied') : '',
+            'sortBy' => $this->request->getVar('sortBy') ? $this->request->getVar('sortBy') : 'DESC'
         ];
         $setFilter = 'firstName like "%' . $filter['firstName']
             . '%" AND middleName like "%' . $filter['middleName']
@@ -180,14 +182,19 @@ class Admin extends BaseController
             'validation' => $formValidation,
             'createModalForm' => view('admin/deceaseds/createModalForm'),
             'filter' => $filter,
+            'filterSelect' => view('components/filter', [
+                'addr' => 'Admin/deceaseds',
+                'filter' => $filter,
+            ]),
             'graves' => $this->graveCoords(),
-            'deceased_data' => $deceasedModel->where($setFilter)->orderBy('createdAt', 'DESC')->paginate(10),
+            'deceased_data' => $deceasedModel->where($setFilter)->orderBy('createdAt', $filter['sortBy'])->paginate(10),
             'pagination_link' => $deceasedModel->pager
         ];
         $html = [
             'body' => view('extras/navigation', $data)
                 . view('highcharts/map', $data)
-                . view('admin/deceaseds/list', $data),
+                . view('admin/deceaseds/list', $data)
+                .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -321,7 +328,6 @@ class Admin extends BaseController
                         'y' => 3,
                     ],
                 ],
-                'shadow' => true,
                 'color' => '#23e9e79a',
                 'cursor' => 'pointer',
                 'tooltip' => [
@@ -351,7 +357,8 @@ class Admin extends BaseController
             ];
             $html = [
                 'body' => view('extras/navigation', $data)
-                    . view('admin/deceaseds/viewDeceased', $data),
+                    . view('admin/deceaseds/viewDeceased', $data)
+                    .view('extras/footer'),
                 'head' => view('extras/head', $data),
                 'sidebar' => view('extras/sidebar', $data)
             ];
@@ -509,7 +516,8 @@ class Admin extends BaseController
 
         $html = [
             'body' => view('extras/navigation', $data)
-                . view('admin/announcements/list', $data),
+                . view('admin/announcements/list', $data)
+                .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -545,7 +553,8 @@ class Admin extends BaseController
             ];
             $html = [
                 'body' => view('extras/navigation', $data)
-                    . view('admin/announcements/viewMessage', $data),
+                    . view('admin/announcements/viewMessage', $data)
+                    .view('extras/footer'),
                 'head' => view('extras/head', $data),
                 'sidebar' => view('extras/sidebar', $data)
             ];
@@ -625,7 +634,8 @@ class Admin extends BaseController
         $html = [
             'body' => view('extras/navigation', $data)
                 . view('components/cards', $data)
-                . view('admin/appointments/' . $status, $data),
+                . view('admin/appointments/' . $status, $data)
+                .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -677,7 +687,8 @@ class Admin extends BaseController
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-                . view('components/settings', $data),
+                . view('components/settings', $data)
+                .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];

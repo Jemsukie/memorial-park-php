@@ -3,7 +3,14 @@
     <p id='position-handler'></p>
 
 
-    <script src='https://memorial-park.000webhostapp.com/create-memorial-map.js'></script>
+
+    <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+    <!-- <script src='https://memorial-park.000webhostapp.com/create-memorial-map.js'></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.6/proj4.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/data.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/offline-exporting.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/accessibility.js"></script>
     <script>
         const mapContainer = document.querySelector('#map-container')
         const positionHandler = document.querySelector('#position-handler')
@@ -36,20 +43,24 @@
 
         const chart = Highcharts.mapChart('map-container', {
             /* paste your content here */
-
             plotOptions: {
                 series: {
                     states: {
                         hover: {
                             enabled: false,
                             halo: {
-                                size: 0
+                                size: 0 
                             },
-
+                        },
+                        inactive: {
+                            opacity: 1
                         }
                     },
-                    zoomBySingleTouch: true
                 },
+                
+            },
+            mapNavigation: {
+                enabled: true
             },
             tooptip: {
                 enabled: false
@@ -84,7 +95,6 @@
                         id: 'id0',
                         y: 0,
                     }, ],
-                    // shadow: true,
                     color: '#2d4928ff',
                 },
                 {
@@ -99,8 +109,8 @@
                         id: 'id1',
                         y: 1,
                     }, ],
-                    // shadow: true,
                     color: '#8aa0a7ff',
+                    
                 },
                 {
                     name: 'Grave Yard',
@@ -114,7 +124,6 @@
                         id: 'id2',
                         y: 1,
                     }, ],
-                    shadow: true,
                     color: '#80bb80ff',
                 },
                 {

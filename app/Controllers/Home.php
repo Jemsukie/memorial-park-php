@@ -22,6 +22,10 @@ class Home extends BaseController
                 'link' => 'Home/about'
             ],
             [
+                'name' => 'FAQ',
+                'link' => 'Home/faq'
+            ],
+            [
                 'name' => 'Contact Us',
                 'link' => 'Home/contact'
             ],
@@ -70,22 +74,22 @@ class Home extends BaseController
             
             return implode('', $raws);
         }
-        // echo session()->get('read') === true ? 'hi' : 'hello';
-        // echo session()->get('read');
-        // session()->remove('read');
-        // $announcement_info['message']
+
         $data = [
             'title' => 'Home',
             'links' => $this->links(),
             'news' => $this->news(),
             'graves' => graveCoords(),
-            'announcement_info' => session()->get('read') === false ? view('homepage/newsModal', ['announcement_info' => $announcement_info['message']]) : ''
+            'announcement_info' => session()->get('read') === false ? view('homepage/newsModal', ['announcement_info' => $announcement_info['message']]) : '',
+            
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('homepage/index', $data),
+            . view('homepage/index', $data)
+            .view('extras/footer'),
             'head' => view('extras/head', $data),
-            'sidebar' => view('extras/sidebar', $data)
+            'sidebar' => view('extras/sidebar', $data),
+            
         ];
         session()->set(['read' => true]);
 
@@ -100,7 +104,25 @@ class Home extends BaseController
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('homepage/about'),
+            . view('homepage/about')
+            .view('extras/footer'),
+            'head' => view('extras/head', $data),
+            'sidebar' => view('extras/sidebar', $data)
+        ];
+
+        return view('extras/body', $html);
+    }
+
+    public function faq(){
+        $data = [
+            'title' => 'FAQ',
+            'links' => $this->links(),
+            'news' => $this->news()
+        ];
+        $html = [
+            'body' => view('extras/navigation', $data)
+            . view('homepage/faq')
+            .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -116,7 +138,8 @@ class Home extends BaseController
         ];
         $html = [
             'body' => view('extras/navigation', $data)
-            . view('homepage/contact'),
+            . view('homepage/contact')
+            .view('extras/footer'),
             'head' => view('extras/head', $data),
             'sidebar' => view('extras/sidebar', $data)
         ];
@@ -125,5 +148,3 @@ class Home extends BaseController
     }
 
 }
-
-?>
